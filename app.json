@@ -2,6 +2,10 @@
   "expo": {
     "name": "tournament",
     "slug": "tournament",
-    "version": "1.0.0"
+    "scheme": "tournament",
+    "version": "1.0.0",
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
