@@ -11,6 +11,7 @@ import { useState } from "react";
 
 export default function Time() {
   const [players, setPlayers] = useState('')
+  const [team, setTeam] = useState('')
   const [name, setName] = useState('')
   const [age, setAge] = useState('')
   const [numberPosition, setNumberPosition] = useState('')
@@ -19,6 +20,11 @@ export default function Time() {
     {key: "Pedro", value: "Pedro"},
     {key: "Samuel", value: "Samuel"},
   ]
+  const dataTeam = [
+    {key: "1", value: "Alianca"},
+    {key: "2", value: "Flamengo"},
+    {key: "3", value: "Goias"},
+  ]
 
   function handleSelect() {
     console.log('Selecionou')
@@ -26,9 +32,10 @@ export default function Time() {
 
   function handleSubmit() {
     const data = {
+      team_id: team,
       name: name,
       age: age,
-      numberPosition: numberPosition
+      number_position: numberPosition
     }
     console.log(data)
   }
@@ -48,6 +55,14 @@ export default function Time() {
             save="value"
           />
           <Text style={container.text}>Dados do Jogador para alteração:</Text>
+          <SelectList 
+            placeholder="Time"
+            boxStyles={container.input}
+            setSelected={(val: string) => setTeam(val)} 
+            data={dataTeam} 
+            onSelect={handleSelect}
+            save="key"
+          />
           <TextInput 
             style={container.input}
             placeholder="Nome"

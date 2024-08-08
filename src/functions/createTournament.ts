@@ -5,7 +5,7 @@ type Match = [Team, Team];
 const groupA: Team[] = ['Equipe A1', 'Equipe A2', 'Equipe A3', 'Equipe A4'];
 const groupB: Team[] = ['Equipe B1', 'Equipe B2', 'Equipe B3', 'Equipe B4'];
 
-function generateMatches(teams: Team[]): Match[] {
+export function generateMatches(teams: Team[]): Match[] {
     const matches: Match[] = [];
     const n = teams.length;
 
@@ -18,7 +18,7 @@ function generateMatches(teams: Team[]): Match[] {
     return matches;
 }
 
-function intercalateMatches(groupA: Match[], groupB: Match[]): Match[] {
+export function intercalateMatches(groupA: Match[], groupB: Match[]): Match[] {
     const intercalated: Match[] = [];
     const maxLength = Math.max(groupA.length, groupB.length);
 

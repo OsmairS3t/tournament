@@ -9,23 +9,26 @@ import { container } from "../../../styles/global";
 import { SelectList } from 'react-native-dropdown-select-list'
 import { useState } from "react";
 
-export default function Time() {
+export default function Grupo() {
   const [tournament, setTournament] = useState('')
   const [name, setName] = useState('')
-  const [colors, setColors] = useState('')
-  const [players, setPlayers] = useState('')
+  const [team, setTeam] = useState('')
 
   const dataTournament = [
     {key: '1', value: 'Campeonato de Futsal 2024'},
     {key: '2', value: 'Campeonato de Voleibol 2024' },
+  ]
+  const dataTeam = [
+    {key: "1", value: "Alianca"},
+    {key: "2", value: "Flamengo"},
+    {key: "3", value: "Goias"},
   ]
 
   function handleSubmit() {
     const data = {
       tournament_id: tournament,
       name: name,
-      colors: colors,
-      players: players
+      team_id: team,
     }
     console.log(data)
   }
@@ -33,7 +36,7 @@ export default function Time() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={container.content}>
-        <Text style={container.title}>Time</Text>
+        <Text style={container.title}>Grupos</Text>
         <View style={container.form}>
           <SelectList 
             placeholder="Torneio"
@@ -44,21 +47,16 @@ export default function Time() {
           />
           <TextInput 
             style={container.input}
-            placeholder="Nome do time"
+            placeholder="Nome do Grupo"
             value={name}
             onChangeText={(text:string) => setName(text)}
           />
-          <TextInput 
-            style={container.input}
-            placeholder="Cores"
-            value={colors}
-            onChangeText={(text:string) => setColors(text)}
-          />
-          <TextInput 
-            style={container.input}
-            placeholder="Jogadores"
-            value={players}
-            onChangeText={(text:string) => setPlayers(text)}
+          <SelectList 
+            placeholder="Time"
+            boxStyles={container.input}
+            setSelected={(val: string) => setTeam(val)} 
+            data={dataTeam} 
+            save="key"
           />
           <TouchableOpacity style={container.button} onPress={handleSubmit}>
             <Text style={container.textButton}>Salvar</Text>

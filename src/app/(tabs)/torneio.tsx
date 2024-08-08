@@ -10,8 +10,10 @@ import { SelectList } from 'react-native-dropdown-select-list'
 import { useState } from "react";
 
 export default function Torneio() {
+  const [name, setName] = useState('')
   const [modality, setModality] = useState('')
-  const [amount, setAmount] = useState('')
+  const [amountGroup, setAmountGroup] = useState('')
+  const [amountTeam, setAmountTeam] = useState('')
   const [kind, setKind] = useState('')
   const dataModality = [
     {key: 'Futebol', value: 'Futebol' },
@@ -24,9 +26,11 @@ export default function Torneio() {
 
   function handleSubmit() {
     const data = {
-      modalidade: modality,
-      quantidade: amount,
-      tipo: kind
+      name: name,
+      modality: modality,
+      amount_group: amountGroup,
+      amount_team: amountTeam,
+      kind: kind
     }
     console.log(data)
   }
@@ -34,8 +38,14 @@ export default function Torneio() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={container.content}>
-        <Text style={container.title}>Torneio</Text>
+        <Text style={container.title}>Torneios</Text>
         <View style={container.form}>
+          <TextInput 
+            style={container.input}
+            placeholder="Nome do torneio"
+            value={name}
+            onChangeText={(text:string) => setName(text)}
+          />
           <SelectList 
             placeholder="Modalidade"
             boxStyles={container.input}
@@ -46,9 +56,16 @@ export default function Torneio() {
           <TextInput 
             keyboardType="numeric"
             style={container.input}
+            placeholder="Qtd Grupos"
+            value={amountGroup}
+            onChangeText={(text:string) => setAmountGroup(text)}
+          />
+          <TextInput 
+            keyboardType="numeric"
+            style={container.input}
             placeholder="Qtd Equipes"
-            value={amount}
-            onChangeText={(text:string) => setAmount(text)}
+            value={amountTeam}
+            onChangeText={(text:string) => setAmountTeam(text)}
           />
           <SelectList 
             placeholder="Tipo"

@@ -18,15 +18,22 @@ export default function TabLayout() {
       <Tabs.Screen
         name="torneio"
         options={{
-          title: 'Torneio',
+          title: 'Torneios',
           tabBarIcon: ({ color }) => <FontAwesome size={20} name="soccer-ball-o" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="grupo"
+        options={{
+          title: 'Grupos',
+          tabBarIcon: ({ color }) => <FontAwesome size={20} name="group" color={color} />,
         }}
       />
       <Tabs.Screen
         name="time"
         options={{
-          title: 'Time',
-          tabBarIcon: ({ color }) => <FontAwesome size={20} name="group" color={color} />,
+          title: 'Times',
+          tabBarIcon: ({ color }) => <FontAwesome size={20} name="object-group" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -39,14 +46,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="jogador"
         options={{
-          title: 'Jogador',
+          title: 'Jogadores',
           tabBarIcon: ({ color }) => <FontAwesome size={20} name="user" color={color} />,
         }}
       />
       <Tabs.Screen
         name="jogo"
         options={{
-          title: 'Jogo',
+          title: 'Jogos',
           tabBarIcon: ({ color }) => <FontAwesome size={20} name="gamepad" color={color} />,
         }}
       />
