@@ -7,18 +7,27 @@ import {
 } from "react-native";
 import { container } from "../../../styles/global";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+import { ISelect, ITournament } from "../../utils/interface";
 
 export default function Time() {
+  const [tournaments, setTournaments] = useState<ITournament[]>([])
+  const [dataTournament, setDataTournament] = useState<ISelect[]>([])
   const [tournament, setTournament] = useState('')
   const [name, setName] = useState('')
   const [colors, setColors] = useState('')
   const [players, setPlayers] = useState('')
 
-  const dataTournament = [
-    {key: '1', value: 'Campeonato de Futsal 2024'},
-    {key: '2', value: 'Campeonato de Voleibol 2024' },
-  ]
+  async function getTournaments() {
+    const { data } = await supabase.from('tournaments').select('*')
+    if (data) {
+      const temp = data.map(item => {
+        return {key: item.id, value: item.name}
+      })
+      setDataTournament(temp)
+    }
+  }
 
   function handleSubmit() {
     const data = {
@@ -27,8 +36,16 @@ export default function Time() {
       colors: colors,
       players: players
     }
+    // const { data, error } = await supabase
+    //   .from('arraytest')
+    //   .insert([{ id: 2, textarray: ['one', 'two', 'three', 'four'] }])
+
     console.log(data)
   }
+
+  useEffect(() => {
+    getTournaments()
+  },[])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

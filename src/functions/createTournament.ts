@@ -34,10 +34,10 @@ export function intercalateMatches(groupA: Match[], groupB: Match[]): Match[] {
     return intercalated;
 }
 
-const matchesGroupA = generateMatches(groupA);
-const matchesGroupB = generateMatches(groupB);
-const tournamentMatches = intercalateMatches(matchesGroupA, matchesGroupB);
+// const matchesGroupA = generateMatches(groupA);
+// const matchesGroupB = generateMatches(groupB);
+// const tournamentMatches = intercalateMatches(matchesGroupA, matchesGroupB);
 
-tournamentMatches.forEach(match => {
-    console.log(`${match[0]} vs ${match[1]}`);
-});
+// tournamentMatches.forEach(match => {
+//     console.log(`${match[0]} vs ${match[1]}`);
+// });

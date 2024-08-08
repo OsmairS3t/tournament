@@ -3,11 +3,13 @@ import {
   Text, 
   TextInput, 
   TouchableOpacity, 
-  SafeAreaView
+  SafeAreaView,
+  Alert
 } from "react-native";
 import { container } from "../../../styles/global";
 import { SelectList } from 'react-native-dropdown-select-list'
 import { useState } from "react";
+import { supabase } from "../../lib/supabase";
 
 export default function Torneio() {
   const [name, setName] = useState('')
@@ -17,22 +19,28 @@ export default function Torneio() {
   const [kind, setKind] = useState('')
   const dataModality = [
     {key: 'Futebol', value: 'Futebol' },
-    {key: 'Volei', value: 'Volei', disabled: true },
+    {key: 'Volei', value: 'Volei' },
   ]
   const dataKind = [
-    {key: 'Mata-Mata', value: 'Mata-Mata', disabled: true},
+    {key: 'Mata-Mata', value: 'Mata-Mata' },
     {key: 'Pontos Corridos', value: 'Pontos Corridos' },
   ]
 
-  function handleSubmit() {
-    const data = {
-      name: name,
-      modality: modality,
-      amount_group: amountGroup,
-      amount_team: amountTeam,
-      kind: kind
+  async function handleSubmit() {
+    try {
+      const { error } = await supabase.from('tournaments').insert({
+        name: name,
+        modality: modality,
+        amount_groups: amountGroup,
+        amount_team: amountTeam,
+        kind: kind
+      })
+      console.log(error)
+      Alert.alert('Torneio incluido com sucesso!')
+    } catch (error) {
+      console.log('Create tournament error: ',error)
     }
-    console.log(data)
+    // console.log(data)
   }
 
   return (
