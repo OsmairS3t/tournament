@@ -6,10 +6,12 @@ import {
   Pressable,
   SafeAreaView,
   Button,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { container } from "../../../styles/global";
 import { SelectList } from 'react-native-dropdown-select-list'
+import { EvilIcons } from '@expo/vector-icons'
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { ISelect, ITournament } from "../../utils/interface";
@@ -26,20 +28,12 @@ export default function Time() {
   const [name, setName] = useState('')
   const [colors, setColors] = useState('')
   const [players, setPlayers] = useState('')
-  const addMember = () => {
-    setMembers(prevMembers => [...prevMembers, prevMembers.length]);
-  };
-
-  const MemberInput: React.FC<MemberInputProps> = ({ index }) => {
-    return (
-      <View style={container.inputContainer}>
-        <TextInput
-          style={container.input}
-          placeholder={`Nome do Membro ${index + 1}`}
-        />
-      </View>
-    );
-  };
+  
+  const reset = () => {
+    setName('')
+    setColors('')
+    setPlayers('')
+  }
 
   async function getTournaments() {
     const { data } = await supabase.from('tournaments').select('*')
@@ -51,18 +45,32 @@ export default function Time() {
     }
   }
 
-  function handleSubmit() {
-    const data = {
-      tournament_id: tournament,
-      name: name,
-      colors: colors,
-      players: players
+  async function handleSubmit() {
+    let jogadores:string[]=[]
+    jogadores = players.split('\n')
+    try {
+      const { data } = await supabase
+        .from('teams')
+        .insert({
+          tournament_id: tournament,
+          name: name,
+          colors: colors,
+          players: jogadores
+        })
+        .select('id')
+      const teamId = data ? data[0].id : 0
+      for (let index = 0; index < jogadores.length; index++) {
+        const element = jogadores[index];
+        await supabase.from('players').insert({
+          team_id: teamId,
+          name: element
+        })
+      }
+      Alert.alert('Time cadastrado com sucesso!')
+      reset()
+    } catch (error) {
+      console.log(error)
     }
-    // const { data, error } = await supabase
-    //   .from('arraytest')
-    //   .insert([{ id: 2, textarray: ['one', 'two', 'three', 'four'] }])
-
-    console.log(data)
   }
 
   useEffect(() => {
@@ -94,20 +102,15 @@ export default function Time() {
             onChangeText={(text: string) => setColors(text)}
           />
           <TextInput
-            style={container.input}
-            placeholder="Jogadores"
+            style={container.inputPlayers}
+            placeholder="Nomes dos Jogadores (somente nome)"
+            keyboardType="default"
+            multiline
+            numberOfLines={20}
+            maxLength={150}
             value={players}
             onChangeText={(text: string) => setPlayers(text)}
           />
-          <Text style={container.label}>Cadastro de Membros</Text>
-          <ScrollView style={container.scrollView}>
-            {members.map(index => (
-              <MemberInput key={index} index={index} />
-            ))}
-          </ScrollView>
-          <Pressable style={container.buttonAddNew} onPress={addMember}>
-            <Text style={container.textButtonAddNew}>Adicionar Jogador</Text>
-          </Pressable>
           <TouchableOpacity style={container.button} onPress={handleSubmit}>
             <Text style={container.textButton}>Salvar</Text>
           </TouchableOpacity>
