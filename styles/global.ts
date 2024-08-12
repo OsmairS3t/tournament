@@ -121,5 +121,14 @@ export const container = StyleSheet.create({
     color: '#eaeaea',
     borderRadius: 8,
   },
-
+  block: {
+    width: '90%',
+    flexDirection: 'column',
+  },
+  subBlock: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 10,
+  },
 })

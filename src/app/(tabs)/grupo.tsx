@@ -3,35 +3,103 @@ import {
   Text, 
   TextInput, 
   TouchableOpacity, 
-  SafeAreaView
+  SafeAreaView,
+  FlatList
 } from "react-native";
 import { container } from "../../../styles/global";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { IGroup, ISelect, ITournament } from "../../utils/interface";
+import { supabase } from "../../lib/supabase";
+
+type tournamentProp = {
+  name: string;
+}
+type teamProp = {
+  name: string;
+}
+interface ListProps {
+  id: number;
+	name: string;
+  tournaments: tournamentProp;
+	teams: teamProp;
+}
 
 export default function Grupo() {
+  const [listGroups, setListGroups] = useState<ListProps[]>([])
+  const [dataTournament, setDataTournament] = useState<ISelect[]>([])
+  const [dataTeam, setDataTeam] = useState<ISelect[]>([])
   const [tournament, setTournament] = useState('')
+  let listIdTeam = [0]
   const [name, setName] = useState('')
   const [team, setTeam] = useState('')
 
-  const dataTournament = [
-    {key: '1', value: 'Campeonato de Futsal 2024'},
-    {key: '2', value: 'Campeonato de Voleibol 2024' },
-  ]
-  const dataTeam = [
-    {key: "1", value: "Alianca"},
-    {key: "2", value: "Flamengo"},
-    {key: "3", value: "Goias"},
-  ]
-
-  function handleSubmit() {
-    const data = {
-      tournament_id: tournament,
-      name: name,
-      team_id: team,
+  async function getTournaments() {
+    const { data } = await supabase.from('tournaments').select('*')
+    if (data) {
+      const temp:ISelect[] = data.map(item => {
+        return { key: item.id, value: item.name }
+      })
+      setDataTournament(temp)
+      getTeams()
     }
-    console.log(data)
   }
+
+  async function getTeams() {
+    // const { data } = await supabase
+    //   .from('groups')
+    //   .select('team_id')
+    //   .eq('tournament_id', tournament)
+    // if (data) {
+    //   data.map(item => {
+    //     listIdTeam.push(item.team_id)
+    //   })
+    // } 
+    // if (listIdTeam.length > 1) {
+    const { data } = await supabase.from('teams').select('*')
+    if (data) {
+      const temp:ISelect[] = data.map(item => {
+        return { key: item.id, value: item.name }
+      })
+      setDataTeam(temp)
+    }
+  }
+
+  async function handleSubmit() {
+    try {
+      await supabase.from('groups').insert({
+        tournament_id: tournament,
+        name: name,
+        team_id: Number(team),
+      })
+      getTeams()
+      ListGroups()
+      console.log(listIdTeam)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+ 
+  async function ListGroups() {
+    try {
+      const { data } = await supabase
+      .from('groups')
+      .select(`
+        id, name, tournaments(name), teams(name)
+      `)
+      .order('name', {ascending: true})
+      if(data){
+        setListGroups(data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getTournaments()
+    ListGroups()
+  },[])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -62,6 +130,17 @@ export default function Grupo() {
             <Text style={container.textButton}>Salvar</Text>
           </TouchableOpacity>
         </View>
+        
+        {
+          listGroups.map(item => (
+            <View key={item.id} style={container.block}>
+              <View style={container.subBlock}>
+                <Text>{item.name}:</Text>
+                <Text>{item.teams.name}</Text>
+              </View>
+            </View>
+          ))
+        }
       </View>
     </SafeAreaView>
   )

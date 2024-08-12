@@ -23,6 +23,15 @@ export default function Time() {
   const [age, setAge] = useState('')
   const [numberPosition, setNumberPosition] = useState('')
 
+  function resetForm() {
+    setPlayerName('')
+    setTeam('')
+    setIdPlayer(0)
+    setName('')
+    setAge('')
+    setNumberPosition('')
+  }
+
   async function handleSelectTeam() {
     try {
       const { data } = await supabase.from('players').select('*').eq('team_id', team)
@@ -36,15 +45,18 @@ export default function Time() {
     } catch (error) {
       console.log(error)
     }
+    resetForm()
   }
 
   function handleSelectPlayer() {
     if (player) {
-      const tempObj:IPlayer = player.find(item => item.id === Number(playerName))
-      setIdPlayer(tempObj.id)
-      setName(tempObj.name)
-      setAge(String(tempObj.age ? tempObj.age : ''))
-      setNumberPosition(tempObj.number_position)
+      const tempObj = player.find(item => item.id === Number(playerName))
+      if(tempObj) {
+        setIdPlayer(tempObj.id)
+        setName(tempObj.name)
+        setAge(String(tempObj.age ? tempObj.age : ''))
+        setNumberPosition(tempObj.number_position)
+      }
     }
   }
 
@@ -56,7 +68,6 @@ export default function Time() {
         age: age,
         number_position: numberPosition
       })
-      console.log(team, name, age, numberPosition)
       Alert.alert('Jogador incluído com sucesso.')
     } catch (error) {
       console.log(error)
