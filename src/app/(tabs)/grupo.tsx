@@ -26,7 +26,7 @@ interface ListProps {
 }
 
 export default function Grupo() {
-  const [listGroups, setListGroups] = useState<ListProps[]>([])
+  const [listGroups, setListGroups] = useState<any[]>([])
   const [dataTournament, setDataTournament] = useState<ISelect[]>([])
   const [dataTeam, setDataTeam] = useState<ISelect[]>([])
   const [tournament, setTournament] = useState('')

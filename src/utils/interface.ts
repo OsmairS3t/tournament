@@ -39,7 +39,7 @@ export interface IGame {
   id: number;
   stage: string;
   data_game: Date;
-  time_game: number;
+  time_game: string;
   duration: number;
   team_one: string;
   team_two: string;
