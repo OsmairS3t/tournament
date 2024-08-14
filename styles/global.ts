@@ -32,6 +32,15 @@ export const container = StyleSheet.create({
     padding: 10,
     width: '100%',
   },
+  select: {
+    width: '100%',
+    height: 45,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    backgroundColor: '#ffffff',
+  },
   input: {
     width: '100%',
     height: 50,
@@ -56,13 +65,13 @@ export const container = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: 50,
+    height: 40,
     backgroundColor: '#121212',
     color: '#eaeaea',
     borderRadius: 8,
   },
   textButton: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     color: '#eaeaea'
   },
@@ -71,10 +80,9 @@ export const container = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 90,
-    height: 40,
+    height: 30,
     borderRadius: 4,
-    backgroundColor: '#064206',
-    marginBottom: 10,
+    backgroundColor: '#068406',
   },
   buttonRemove: {
     justifyContent: 'center',
@@ -87,7 +95,7 @@ export const container = StyleSheet.create({
   },
   textButtonAddNew: {
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: '600',
     color: '#eaeaea',
   },
   scrollView: {
@@ -95,7 +103,13 @@ export const container = StyleSheet.create({
     height: 210,
     overflow: 'scroll',
   },
+  buttonListContainer: {
+    overflow: 'scroll',
+    height: 200,
+  },
   inputContainer: {
+    width: '97%',
+    height: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -103,8 +117,8 @@ export const container = StyleSheet.create({
     marginBottom: 10,
   },
   inputAddNew: {
-    width: '80%',
-    height: 50,
+    width: '70%',
+    height: 40,
     padding: 10,
     marginBottom: 10,
     borderRadius: 8,
@@ -130,5 +144,17 @@ export const container = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     gap: 10,
+  },
+  gameContainer: {
+    paddingTop: 6,
+    width: '90%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+  },
+  textGameX: {
+    fontWeight: '700',
+    fontSize: 14,
   },
 })
