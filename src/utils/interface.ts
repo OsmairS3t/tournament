@@ -48,6 +48,7 @@ export interface IGame {
   yellow_cards: number;
   red_cards: number;
   winner: string;
+  tournament_id: number;
 }
 
 export interface IStatusGame {
@@ -61,7 +62,7 @@ export interface IStatusGame {
 
 export interface IStatusTeam {
   tournament_id: number;
-  team_id: number;
+  team_name: string;
   points: number;
   wins: number;
   defeats: number;

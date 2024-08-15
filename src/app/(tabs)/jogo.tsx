@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, Alert, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Alert, ScrollView } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { SelectList } from 'react-native-dropdown-select-list'
 import { generateMatches, intercalateMatches } from "../../functions/createTournament";
@@ -19,18 +19,36 @@ export default function Jogo() {
   const [groupB, setGroupB] = useState<Team[]>([])
   const [listGames, setListGames] = useState<TMatch[]>([])
   const [tournament, setTournament] = useState('')
+  const [tournamentName, setTournamentName] = useState('')
   const [teamOne, setTeamOne] = useState('')
   const [teamTwo, setTeamTwo] = useState('')
   const [dataTournament, setDataTournament] = useState<ISelect[]>([])
   const [dataTeams, setDataTeams] = useState<ISelect[]>([])
+  const [isModalGenerateOpen, setIsModalGenerateOpen] = useState(false)
+  const [isModalOtherOpen, setIsModalOtherOpen] = useState(false)
 
-  async function getTournaments() {
-    const { data } = await supabase.from('tournaments').select('*')
-    if (data) {
-      const temp:ISelect[] = data.map(item => {
-        return { key: item.id, value: item.name }
-      })
-      setDataTournament(temp)
+  function handleOpenModalGenerate() {
+    setIsModalGenerateOpen(true)
+  }
+
+  function handleOpenModalOther() {
+    setIsModalOtherOpen(true)
+  }
+
+  async function getTournaments(id?: number) {
+    if(id) {
+      const { data } = await supabase.from('tournaments').select('*').eq('id', id)
+      if (data) {
+        setTournamentName(data[0].name)
+      }
+    } else {
+      const { data } = await supabase.from('tournaments').select('*')
+      if (data) {
+        const temp:ISelect[] = data.map(item => {
+          return { key: item.id, value: item.name }
+        })
+        setDataTournament(temp)
+      }
     }
   }
 
@@ -83,7 +101,7 @@ export default function Jogo() {
       temp.push({ id: id, teamOne: match[0], teamTwo: match[1] })
     });
     setListGames(temp)
-    // console.log('Jogos cadastrados: ',temp);
+    console.log('Jogos cadastrados: ',temp);
   }
 
   async function handleSubimt(match: TMatch) {
@@ -101,12 +119,13 @@ export default function Jogo() {
         goal_team_two: 0,
         yellow_cards: 0,
         red_cards: 0,
-        winner: ''
+        winner: '',
+        tournament_id: tournament
       })
       if (error) {
         console.log('Erro cadastro: ',error)
       }
-      Alert.alert('Jogo cadastrado com sucesso!')
+      // Alert.alert('Jogo cadastrado com sucesso!')
       const temp = listGames.filter(item => item.id !== match.id)
       setListGames(temp)
     } catch (error) {
@@ -129,7 +148,8 @@ export default function Jogo() {
         goal_team_two: 0,
         yellow_cards: 0,
         red_cards: 0,
-        winner: ''
+        winner: '',
+        tournament_id: tournament
       })
       if (error) {
         console.log('Erro cadastro: ',error)
@@ -149,59 +169,92 @@ export default function Jogo() {
     <View style={container.content}>
       <Text>Jogos</Text>
       <View style={container.form}>
-      <SelectList 
-        placeholder="Torneio"
-        boxStyles={container.input}
-        setSelected={(val: string) => setTournament(val)} 
-        data={dataTournament} 
-        save="key"
-      />
-      <TouchableOpacity style={container.button} onPress={createGames}>
-        <Text style={container.textButton}>Criar Jogos</Text>
-      </TouchableOpacity>
+        <SelectList 
+          placeholder="Torneio"
+          boxStyles={container.input}
+          setSelected={(val: string) => setTournament(val)} 
+          onSelect={() => getTournaments(Number(tournament))}
+          data={dataTournament} 
+          save="key"
+        />
+        <TouchableOpacity style={container.button} onPress={handleOpenModalGenerate}>
+          <Text style={container.textButton}>Criar Jogos Automaticamente</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={container.button} onPress={handleOpenModalOther}>
+          <Text style={container.textButton}>Criar Jogos Avulsos</Text>
+        </TouchableOpacity>
       </View>
 
-      {listGames.length > 1 && <Text>JOGOS CRIADOS:</Text>}
-      <ScrollView style={container.buttonListContainer}>
-        {listGames.map((item) => (
-          <View key={item.id} style={container.inputContainer}>
-            <Text>{item.teamOne} x {item.teamTwo}</Text>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={isModalGenerateOpen}
+        onRequestClose={() => {
+          setIsModalGenerateOpen(!isModalGenerateOpen);
+        }}
+      >
+        <View style={container.form}>
+          <TouchableOpacity style={container.button} onPress={createGames}>
+            <Text style={container.textButton}>Criar Jogos</Text>
+          </TouchableOpacity>
+          <Text>TORNEIO: {tournamentName}</Text>
+          <Text>JOGOS CRIADOS:</Text>
+          <ScrollView style={container.buttonListContainer}>
+            {listGames.map((item) => (
+              <View key={item.id} style={container.inputContainer}>
+                <Text>{item.teamOne} x {item.teamTwo}</Text>
+                <TouchableOpacity 
+                  style={container.buttonAddNew} 
+                  onPress={() => handleSubimt(item)}
+                >
+                  <Text style={container.textButtonAddNew}>Salvar</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+          <TouchableOpacity style={container.button} onPress={() => setIsModalGenerateOpen(false)}>
+            <Text style={container.textButton}>Fechar</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={isModalOtherOpen}
+        onRequestClose={() => {
+          setIsModalOtherOpen(!isModalOtherOpen);
+        }}
+      >
+        <View style={container.form}>
+          <Text>CRIAR JOGO AVULSO:</Text>
+          <View style={container.gameContainer}>
+            <SelectList 
+              placeholder="Time Um"
+              boxStyles={container.select}
+              setSelected={(val: string) => setTeamOne(val)} 
+              data={dataTeams} 
+              save="value"
+            />
             <TouchableOpacity 
               style={container.buttonAddNew} 
-              onPress={() => handleSubimt(item)}
+              onPress={() => handleSubimtExtra({id: 100, teamOne: teamOne, teamTwo: teamTwo})}
             >
-              <Text style={container.textButtonAddNew}>Salvar</Text>
+              <Text style={container.textButtonAddNew}>X</Text>
             </TouchableOpacity>
+            <SelectList 
+              placeholder="Time Dois"
+              boxStyles={container.select}
+              setSelected={(val: string) => setTeamTwo(val)} 
+              data={dataTeams} 
+              save="value"
+            />
           </View>
-        ))}
-      </ScrollView>
-      <View>
-        <Text>CRIAR JOGO AVULSO:</Text>
-        <View style={container.gameContainer}>
-          <SelectList 
-            placeholder="Time Um"
-            boxStyles={container.select}
-            dropdownStyles={{height: 50}}
-            setSelected={(val: string) => setTeamOne(val)} 
-            data={dataTeams} 
-            save="key"
-          />
-          <TouchableOpacity 
-            style={container.buttonAddNew} 
-            onPress={() => handleSubimtExtra({id: 100, teamOne: teamOne, teamTwo: teamTwo})}
-          >
-            <Text style={container.textButtonAddNew}>X</Text>
+          <TouchableOpacity style={container.button} onPress={() => setIsModalOtherOpen(false)}>
+            <Text style={container.textButton}>Fechar</Text>
           </TouchableOpacity>
-          <SelectList 
-            placeholder="Time Dois"
-            boxStyles={container.select}
-            dropdownStyles={{height: 50}}
-            setSelected={(val: string) => setTeamTwo(val)} 
-            data={dataTeams} 
-            save="key"
-          />
         </View>
-      </View>
+      </Modal>
     </View>
   )
 }
