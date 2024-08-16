@@ -49,6 +49,7 @@ export interface IGame {
   red_cards: number;
   winner: string;
   tournament_id: number;
+  status_game: boolean;
 }
 
 export interface IStatusGame {
@@ -61,6 +62,7 @@ export interface IStatusGame {
 }
 
 export interface IStatusTeam {
+  id: number;
   tournament_id: number;
   team_name: string;
   points: number;
@@ -70,4 +72,5 @@ export interface IStatusTeam {
   goal_scored: number;
   goal_conceded: number;
   goal_difference: number;
+  group_team: string;
 }

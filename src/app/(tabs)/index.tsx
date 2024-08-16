@@ -4,6 +4,7 @@ import { supabase } from "../../lib/supabase";
 import { useEffect, useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { IGame, ISelect } from "../../utils/interface";
+import Countdown from "../../functions/CountDown";
 
 export default function Home() {
   const [tournamentId, setTournamentId] = useState('')
@@ -153,34 +154,43 @@ export default function Home() {
       await supabase.from('games').update({
           goal_team_one: goalOne,
           goal_team_two: goalTwo,
-          winner: winner
+          winner: winner,
+          status_game: true
         }).eq('id', game?.id)
       Alert.alert('Resultado salvo com sucesso!')
       listGames(tournamentId)
 
-      //verify status teamone and two if exists
-      const { data } = await supabase.from('statusteam').select('*')
-        .eq('tournament_id',tournamentId).eq('team_name',teamOne)
+      //verify status team one and two if exists
+      const { data, error } = await supabase.from('statusteam').select('*')
+        .eq('tournament_id', tournamentId)
+        .eq('team_name', teamOne)
       if (data) {
-        tODBpoints = data[0].points
-        tODBwins = data[0].wins
-        tODBdefeats = data[0].defeats
-        tODBdraws = data[0].draws
-        tODBgoal_scored = data[0].goal_scored
-        tODBgoal_conceded = data[0].goal_conceded
-        tODBgoal_difference = data[0].goal_difference
+        if(data.length > 0) {
+          tODBpoints = data[0].points
+          tODBwins = data[0].wins
+          tODBdefeats = data[0].defeats
+          tODBdraws = data[0].draws
+          tODBgoal_scored = data[0].goal_scored
+          tODBgoal_conceded = data[0].goal_conceded
+          tODBgoal_difference = data[0].goal_difference
+        }
       }
+      if (error) { console.log('erro status one', error)}
       const dataTeamTwo = await supabase.from('statusteam').select('*')
-        .eq('tournament_id',tournamentId).eq('team_name',teamTwo)
+      .eq('tournament_id', tournamentId)
+      .eq('team_name', teamTwo)
       if (dataTeamTwo.data) {
-        tTDBpoints = dataTeamTwo.data[0].points
-        tTDBwins = dataTeamTwo.data[0].wins
-        tTDBdefeats = dataTeamTwo.data[0].defeats
-        tTDBdraws = dataTeamTwo.data[0].draws
-        tTDBgoal_scored = dataTeamTwo.data[0].goal_scored
-        tTDBgoal_conceded = dataTeamTwo.data[0].goal_conceded
-        tTDBgoal_difference = dataTeamTwo.data[0].goal_difference
+        if (dataTeamTwo.data.length > 0) {
+          tTDBpoints = dataTeamTwo.data[0].points
+          tTDBwins = dataTeamTwo.data[0].wins
+          tTDBdefeats = dataTeamTwo.data[0].defeats
+          tTDBdraws = dataTeamTwo.data[0].draws
+          tTDBgoal_scored = dataTeamTwo.data[0].goal_scored
+          tTDBgoal_conceded = dataTeamTwo.data[0].goal_conceded
+          tTDBgoal_difference = dataTeamTwo.data[0].goal_difference
+        }
       }
+
       //save statusteam One
       await supabase.from('statusteam').insert({
           tournament_id: tournamentId,
@@ -193,7 +203,7 @@ export default function Home() {
           goal_conceded: tOgoal_conceded + tODBgoal_conceded,
           goal_difference: tOgoal_difference + tODBgoal_difference,
         })
-      //save statusteam Two
+      // //save statusteam Two
       await supabase.from('statusteam').insert({
           tournament_id: tournamentId,
           team_name: teamTwo,
@@ -232,7 +242,7 @@ export default function Home() {
           {games.map(item => (
             <TouchableOpacity 
               key={item.id} onPress={() => playGame(item)} 
-              style={container.gameContainerPlay}
+              style={item.status_game ? container.gameContainerPlayDisabled : container.gameContainerPlay}
             >
               <Text>{count++}</Text>
               <Text style={container.textTeamOne}>{item.team_one}</Text>
@@ -280,13 +290,7 @@ export default function Home() {
             <Text style={container.textGameX}>{game?.team_two}</Text>
             
             <View style={container.containerMarkPlay}>
-              <TouchableOpacity onPress={() => {}} style={container.buttonPlayGame}>
-                <Text style={container.textButtonPlayGame}>Iniciar</Text>
-              </TouchableOpacity>
-              <Text style={container.textGamePlay}>00:00</Text>
-              <TouchableOpacity onPress={() => {}} style={container.buttonPlayGame}>
-                <Text style={container.textButtonPlayGame}>Encerrar</Text>
-              </TouchableOpacity>
+              <Countdown initialSeconds={1200} />
             </View>
 
             <TouchableOpacity style={container.button} onPress={() => saveGame()}>

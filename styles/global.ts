@@ -168,6 +168,16 @@ export const container = StyleSheet.create({
     paddingLeft: 8,
     marginBottom: 2,
   },
+  gameContainerPlayDisabled: {
+    width: '100%',
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'silver',
+    paddingLeft: 8,
+    marginBottom: 2,
+  },
   textTeamOne: {
     width: 130,
     textAlign: 'center',
@@ -242,4 +252,28 @@ export const container = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
+  tblClassification: {
+    width: '100%',
+    height: 25,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    gap: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#9c9b9a',
+  },
+  tblTTTDPrimary: {
+    width: 100,
+    fontWeight: '700',
+  },
+  tblTTTD: {
+    width: 20,
+    fontWeight: '700',
+  },
+  tblTDPrimary: {
+    width: 100,
+  },
+  tblTD: {
+    width: 20,
+  }
 })

@@ -57,6 +57,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome size={20} name="gamepad" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="classificacao"
+        options={{
+          title: 'Class',
+          tabBarIcon: ({ color }) => <FontAwesome size={20} name="reorder" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

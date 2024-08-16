@@ -120,7 +120,8 @@ export default function Jogo() {
         yellow_cards: 0,
         red_cards: 0,
         winner: '',
-        tournament_id: tournament
+        tournament_id: tournament,
+        status_game: false
       })
       if (error) {
         console.log('Erro cadastro: ',error)
@@ -149,7 +150,8 @@ export default function Jogo() {
         yellow_cards: 0,
         red_cards: 0,
         winner: '',
-        tournament_id: tournament
+        tournament_id: tournament,
+        status_game: false
       })
       if (error) {
         console.log('Erro cadastro: ',error)
