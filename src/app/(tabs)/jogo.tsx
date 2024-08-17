@@ -12,16 +12,19 @@ type TMatch = {
   id: number;
   teamOne: string;
   teamTwo: string;
+  group: string;
 }
 
 export default function Jogo() {
   const [groupA, setGroupA] = useState<Team[]>([])
   const [groupB, setGroupB] = useState<Team[]>([])
+  const [stage, setStage] = useState('')
   const [listGames, setListGames] = useState<TMatch[]>([])
   const [tournament, setTournament] = useState('')
   const [tournamentName, setTournamentName] = useState('')
   const [teamOne, setTeamOne] = useState('')
   const [teamTwo, setTeamTwo] = useState('')
+  const [group, setGroup] = useState('')
   const [dataTournament, setDataTournament] = useState<ISelect[]>([])
   const [dataTeams, setDataTeams] = useState<ISelect[]>([])
   const [isModalGenerateOpen, setIsModalGenerateOpen] = useState(false)
@@ -36,7 +39,7 @@ export default function Jogo() {
   }
 
   async function getTournaments(id?: number) {
-    if(id) {
+    if (id) {
       const { data } = await supabase.from('tournaments').select('*').eq('id', id)
       if (data) {
         setTournamentName(data[0].name)
@@ -44,7 +47,7 @@ export default function Jogo() {
     } else {
       const { data } = await supabase.from('tournaments').select('*')
       if (data) {
-        const temp:ISelect[] = data.map(item => {
+        const temp: ISelect[] = data.map(item => {
           return { key: item.id, value: item.name }
         })
         setDataTournament(temp)
@@ -56,24 +59,24 @@ export default function Jogo() {
     const { data } = await supabase
       .from('teams')
       .select(`id, name`)
-      .order('name', {ascending: true})
+      .order('name', { ascending: true })
     if (data) {
-      const temp:ISelect[] = data.map(item => {
+      const temp: ISelect[] = data.map(item => {
         return { key: item.id, value: item.name }
       })
       setDataTeams(temp)
     }
   }
-  
+
   async function getTeamsByGroup(group: string, setLista: React.Dispatch<React.SetStateAction<string[]>>) {
     try {
-      let element:string[] = []
+      let element: string[] = []
       const { data, error } = await supabase
         .from('groups').select(`name, teams(name)`)
         .eq('name', group)
-        .order('name', {ascending: true})
+        .order('name', { ascending: true })
       if (data) {
-        const temp:any[] = data
+        const temp: any[] = data
         temp.map(item => {
           element.push(item.teams.name)
         })
@@ -91,24 +94,24 @@ export default function Jogo() {
     getTeamsByGroup('Grupo A', setGroupA)
     getTeamsByGroup('Grupo B', setGroupB)
 
-    const matchesGroupA = generateMatches(groupA);
-    const matchesGroupB = generateMatches(groupB);
+    const matchesGroupA = generateMatches(groupA, 'Grupo A');
+    const matchesGroupB = generateMatches(groupB, 'Grupo B');
 
     const tournamentMatches = intercalateMatches(matchesGroupA, matchesGroupB);
-    let temp:TMatch[] = [] 
+    let temp: TMatch[] = []
     tournamentMatches.forEach(match => {
       id += 1
-      temp.push({ id: id, teamOne: match[0], teamTwo: match[1] })
+      temp.push({ id: id, teamOne: match[0], teamTwo: match[1], group: match[2] })
     });
     setListGames(temp)
-    console.log('Jogos cadastrados: ',temp);
+    console.log('Jogos cadastrados: ', temp);
   }
 
   async function handleSubimt(match: TMatch) {
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
     try {
-      const {data, error} = await supabase.from('games').insert({
+      const { data, error } = await supabase.from('games').insert({
         stage: 'GRUPOS',
         date_game: today,
         time_game: '20:00',
@@ -121,10 +124,11 @@ export default function Jogo() {
         red_cards: 0,
         winner: '',
         tournament_id: tournament,
-        status_game: false
+        status_game: false,
+        group_team: match.group
       })
       if (error) {
-        console.log('Erro cadastro: ',error)
+        console.log('Erro cadastro: ', error)
       }
       // Alert.alert('Jogo cadastrado com sucesso!')
       const temp = listGames.filter(item => item.id !== match.id)
@@ -138,7 +142,7 @@ export default function Jogo() {
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
     try {
-      const {data, error} = await supabase.from('games').insert({
+      const { data, error } = await supabase.from('games').insert({
         stage: 'GRUPOS',
         date_game: today,
         time_game: '20:00',
@@ -151,10 +155,11 @@ export default function Jogo() {
         red_cards: 0,
         winner: '',
         tournament_id: tournament,
-        status_game: false
+        status_game: false,
+        group_team: group
       })
       if (error) {
-        console.log('Erro cadastro: ',error)
+        console.log('Erro cadastro: ', error)
       }
       Alert.alert('Jogo cadastrado com sucesso!')
     } catch (error) {
@@ -165,20 +170,12 @@ export default function Jogo() {
   useEffect(() => {
     getTournaments()
     getTeams()
-  },[])
+  }, [])
 
   return (
     <View style={container.content}>
       <Text>Jogos</Text>
       <View style={container.form}>
-        <SelectList 
-          placeholder="Torneio"
-          boxStyles={container.input}
-          setSelected={(val: string) => setTournament(val)} 
-          onSelect={() => getTournaments(Number(tournament))}
-          data={dataTournament} 
-          save="key"
-        />
         <TouchableOpacity style={container.button} onPress={handleOpenModalGenerate}>
           <Text style={container.textButton}>Criar Jogos Automaticamente</Text>
         </TouchableOpacity>
@@ -195,18 +192,41 @@ export default function Jogo() {
           setIsModalGenerateOpen(!isModalGenerateOpen);
         }}
       >
+        <SelectList
+          placeholder="Torneio"
+          boxStyles={container.input}
+          setSelected={(val: string) => setTournament(val)}
+          onSelect={() => getTournaments(Number(tournament))}
+          data={dataTournament}
+          save="key"
+        />
+
+        <SelectList
+          placeholder="Fase"
+          boxStyles={container.input}
+          setSelected={(val: string) => setStage(val)}
+          data={[
+            { key: 'GRUPOS', value: 'GRUPOS' },
+            { key: 'SEMIFINAL', value: 'SEMIFINAL' },
+            { key: '3 LUGAR', value: '3 LUGAR' },
+            { key: 'FINAL', value: 'FINAL' },
+          ]}
+          save="key"
+        />
+
         <View style={container.form}>
           <TouchableOpacity style={container.button} onPress={createGames}>
             <Text style={container.textButton}>Criar Jogos</Text>
           </TouchableOpacity>
           <Text>TORNEIO: {tournamentName}</Text>
+
           <Text>JOGOS CRIADOS:</Text>
           <ScrollView style={container.buttonListContainer}>
             {listGames.map((item) => (
               <View key={item.id} style={container.inputContainer}>
-                <Text>{item.teamOne} x {item.teamTwo}</Text>
-                <TouchableOpacity 
-                  style={container.buttonAddNew} 
+                <Text>{item.group} - {item.teamOne} x {item.teamTwo}</Text>
+                <TouchableOpacity
+                  style={container.buttonAddNew}
                   onPress={() => handleSubimt(item)}
                 >
                   <Text style={container.textButtonAddNew}>Salvar</Text>
@@ -214,6 +234,7 @@ export default function Jogo() {
               </View>
             ))}
           </ScrollView>
+
           <TouchableOpacity style={container.button} onPress={() => setIsModalGenerateOpen(false)}>
             <Text style={container.textButton}>Fechar</Text>
           </TouchableOpacity>
@@ -229,26 +250,58 @@ export default function Jogo() {
         }}
       >
         <View style={container.form}>
+          <SelectList
+            placeholder="Torneio"
+            boxStyles={container.input}
+            setSelected={(val: string) => setTournament(val)}
+            onSelect={() => getTournaments(Number(tournament))}
+            data={dataTournament}
+            save="key"
+          />
+
+          <SelectList
+            placeholder="Fase"
+            boxStyles={container.input}
+            setSelected={(val: string) => setStage(val)}
+            data={[
+              { key: 'GRUPOS', value: 'GRUPOS' },
+              { key: 'SEMIFINAL', value: 'SEMIFINAL' },
+              { key: '3 LUGAR', value: '3 LUGAR' },
+              { key: 'FINAL', value: 'FINAL' },
+            ]}
+            save="key"
+          />
+
           <Text>CRIAR JOGO AVULSO:</Text>
+          <SelectList
+            placeholder="Grupo"
+            boxStyles={container.input}
+            setSelected={(val: string) => setGroup(val)}
+            data={[
+              { key: 'Group A', value: 'Group A' },
+              { key: 'Group B', value: 'Group B' }
+            ]}
+            save="key"
+          />
           <View style={container.gameContainer}>
-            <SelectList 
+            <SelectList
               placeholder="Time Um"
               boxStyles={container.select}
-              setSelected={(val: string) => setTeamOne(val)} 
-              data={dataTeams} 
+              setSelected={(val: string) => setTeamOne(val)}
+              data={dataTeams}
               save="value"
             />
-            <TouchableOpacity 
-              style={container.buttonAddNew} 
-              onPress={() => handleSubimtExtra({id: 100, teamOne: teamOne, teamTwo: teamTwo})}
+            <TouchableOpacity
+              style={container.buttonAddNew}
+              onPress={() => handleSubimtExtra({ id: 100, teamOne: teamOne, teamTwo: teamTwo, group: group })}
             >
               <Text style={container.textButtonAddNew}>X</Text>
             </TouchableOpacity>
-            <SelectList 
+            <SelectList
               placeholder="Time Dois"
               boxStyles={container.select}
-              setSelected={(val: string) => setTeamTwo(val)} 
-              data={dataTeams} 
+              setSelected={(val: string) => setTeamTwo(val)}
+              data={dataTeams}
               save="value"
             />
           </View>

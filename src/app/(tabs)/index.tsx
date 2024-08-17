@@ -17,12 +17,13 @@ export default function Home() {
   const [goalTwo, setGoalTwo] = useState(0)
   const [teamOne, setTeamOne] = useState('')
   const [teamTwo, setTeamTwo] = useState('')
+  const [stage, setStage] = useState('')
   let count = 1
 
   async function getTournaments() {
     const { data } = await supabase.from('tournaments').select('*')
     if (data) {
-      const temp:ISelect[] = data.map(item => {
+      const temp: ISelect[] = data.map(item => {
         return { key: item.id, value: item.name }
       })
       setDataTournament(temp)
@@ -39,7 +40,7 @@ export default function Home() {
       setGames(data)
     }
   }
-  
+
   function GoalOne(value: string) {
     if (value === '-') {
       setGoalOne(goalOne - 1)
@@ -63,11 +64,13 @@ export default function Home() {
     setGoalTwo(gamePlay.goal_team_two)
     setTeamOne(gamePlay.team_one)
     setTeamTwo(gamePlay.team_two)
+    // setGroup(gamePlay.group_team)
   }
 
   async function saveGame() {
     let winner = ''
     let tournamentId = 0
+    let groupTeam = ''
     let tOpoints = 0
     let tOwins = 0
     let tOdefeats = 0
@@ -98,7 +101,8 @@ export default function Home() {
     let tTDBgoal_difference = 0
     if (game) {
       tournamentId = game.tournament_id
-      if (goalOne > goalTwo) {
+      groupTeam = game.group_team
+      if (goalOne > goalTwo) { //teamOne Win
         winner = game.team_one
         tOpoints = 3
         tOwins = 1
@@ -115,7 +119,7 @@ export default function Home() {
         tTgoal_conceded = goalOne
         tTgoal_difference = goalTwo - goalOne
       }
-      if (goalOne < goalTwo) {
+      if (goalOne < goalTwo) {  //teamTwo Win
         winner = game.team_two
         tTpoints = 3
         tTwins = 1
@@ -132,7 +136,7 @@ export default function Home() {
         tOgoal_conceded = goalTwo
         tOgoal_difference = goalOne - goalTwo
       }
-      if (goalOne === goalTwo) {
+      if (goalOne === goalTwo) {  //Draws
         winner = 'EMPATE'
         tOpoints = 1
         tOwins = 0
@@ -152,20 +156,22 @@ export default function Home() {
     }
     try {
       await supabase.from('games').update({
-          goal_team_one: goalOne,
-          goal_team_two: goalTwo,
-          winner: winner,
-          status_game: true
-        }).eq('id', game?.id)
+        goal_team_one: goalOne,
+        goal_team_two: goalTwo,
+        winner: winner,
+        status_game: true
+      }).eq('id', game?.id)
       Alert.alert('Resultado salvo com sucesso!')
       listGames(tournamentId)
 
       //verify status team one and two if exists
-      const { data, error } = await supabase.from('statusteam').select('*')
+      const { data, error } = await supabase
+        .from('statusteam')
+        .select('*')
         .eq('tournament_id', tournamentId)
         .eq('team_name', teamOne)
       if (data) {
-        if(data.length > 0) {
+        if (data.length > 0) {
           tODBpoints = data[0].points
           tODBwins = data[0].wins
           tODBdefeats = data[0].defeats
@@ -173,12 +179,40 @@ export default function Home() {
           tODBgoal_scored = data[0].goal_scored
           tODBgoal_conceded = data[0].goal_conceded
           tODBgoal_difference = data[0].goal_difference
+          //upate database
+          await supabase
+            .from('statusteam')
+            .update({
+              points: tOpoints + tODBpoints,
+              wins: tOwins + tODBwins,
+              defeats: tOdefeats + tODBdefeats,
+              draws: tOdraws + tODBdraws,
+              goal_scored: tOgoal_scored + tODBgoal_scored,
+              goal_conceded: tOgoal_conceded + tODBgoal_conceded,
+              goal_difference: tOgoal_difference + tODBgoal_difference,
+              group_team: groupTeam
+            })
+            .eq('id', data[0].id)
+        } else { //save statusteam One
+          await supabase.from('statusteam').insert({
+            tournament_id: tournamentId,
+            team_name: teamOne,
+            points: tOpoints + tODBpoints,
+            wins: tOwins + tODBwins,
+            defeats: tOdefeats + tODBdefeats,
+            draws: tOdraws + tODBdraws,
+            goal_scored: tOgoal_scored + tODBgoal_scored,
+            goal_conceded: tOgoal_conceded + tODBgoal_conceded,
+            goal_difference: tOgoal_difference + tODBgoal_difference,
+            group_team: groupTeam
+          })
         }
       }
-      if (error) { console.log('erro status one', error)}
+      if (error) { console.log('erro status one', error) }
+
       const dataTeamTwo = await supabase.from('statusteam').select('*')
-      .eq('tournament_id', tournamentId)
-      .eq('team_name', teamTwo)
+        .eq('tournament_id', tournamentId)
+        .eq('team_name', teamTwo)
       if (dataTeamTwo.data) {
         if (dataTeamTwo.data.length > 0) {
           tTDBpoints = dataTeamTwo.data[0].points
@@ -188,33 +222,36 @@ export default function Home() {
           tTDBgoal_scored = dataTeamTwo.data[0].goal_scored
           tTDBgoal_conceded = dataTeamTwo.data[0].goal_conceded
           tTDBgoal_difference = dataTeamTwo.data[0].goal_difference
+          //upate database
+          await supabase
+            .from('statusteam')
+            .update({
+              points: tTpoints + tTDBpoints,
+              wins: tTwins + tTDBwins,
+              defeats: tTdefeats + tTDBdefeats,
+              draws: tTdraws + tTDBdraws,
+              goal_scored: tTgoal_scored + tTDBgoal_scored,
+              goal_conceded: tTgoal_conceded + tTDBgoal_conceded,
+              goal_difference: tTgoal_difference + tTDBgoal_difference,
+              group_team: groupTeam
+            })
+            .eq('id', dataTeamTwo.data[0].id)
+        } else {
+          // save statusteam Two
+          await supabase.from('statusteam').insert({
+            tournament_id: tournamentId,
+            team_name: teamTwo,
+            points: tTpoints + tTDBpoints,
+            wins: tTwins + tTDBwins,
+            defeats: tTdefeats + tTDBdefeats,
+            draws: tTdraws + tTDBdraws,
+            goal_scored: tTgoal_scored + tTDBgoal_scored,
+            goal_conceded: tTgoal_conceded + tTDBgoal_conceded,
+            goal_difference: tTgoal_difference + tTDBgoal_difference,
+            group_team: groupTeam
+          })
         }
       }
-
-      //save statusteam One
-      await supabase.from('statusteam').insert({
-          tournament_id: tournamentId,
-          team_name: teamOne,
-          points: tOpoints + tODBpoints,
-          wins: tOwins + tODBwins,
-          defeats: tOdefeats + tODBdefeats,
-          draws: tOdraws + tODBdraws,
-          goal_scored: tOgoal_scored + tODBgoal_scored,
-          goal_conceded: tOgoal_conceded + tODBgoal_conceded,
-          goal_difference: tOgoal_difference + tODBgoal_difference,
-        })
-      // //save statusteam Two
-      await supabase.from('statusteam').insert({
-          tournament_id: tournamentId,
-          team_name: teamTwo,
-          points: tTpoints + tTDBpoints,
-          wins: tTwins + tTDBwins,
-          defeats: tTdefeats + tTDBdefeats,
-          draws: tTdraws + tTDBdraws,
-          goal_scored: tTgoal_scored + tTDBgoal_scored,
-          goal_conceded: tTgoal_conceded + tTDBgoal_conceded,
-          goal_difference: tTgoal_difference + tTDBgoal_difference,
-        })
       Alert.alert('Status de classificação atualizada com sucesso.')
     } catch (error) {
       console.log(error)
@@ -223,25 +260,39 @@ export default function Home() {
 
   useEffect(() => {
     getTournaments()
-  },[])
+  }, [])
 
   return (
     <View style={container.content}>
       <Text>Torneios Luz</Text>
       <View style={container.form}>
-        <SelectList 
+        <SelectList
           placeholder="Torneio"
           boxStyles={container.input}
-          setSelected={(val: string) => setTournamentId(val)} 
+          setSelected={(val: string) => setTournamentId(val)}
           onSelect={() => listGames(Number(tournamentId))}
-          data={dataTournament} 
+          data={dataTournament}
           save="key"
         />
+
+        <SelectList
+          placeholder="Fase"
+          boxStyles={container.input}
+          setSelected={(val: string) => setStage(val)}
+          data={[
+            { key: 'GRUPOS', value: 'GRUPOS' },
+            { key: 'SEMIFINAL', value: 'SEMIFINAL' },
+            { key: '3 LUGAR', value: '3 LUGAR' },
+            { key: 'FINAL', value: 'FINAL' },
+          ]}
+          save="key"
+        />
+
         <Text>JOGOS CADASTRADOS:</Text>
-        <ScrollView style={{overflow: 'scroll', height: 450}}>
+        <ScrollView style={{ overflow: 'scroll', height: 450 }}>
           {games.map(item => (
-            <TouchableOpacity 
-              key={item.id} onPress={() => playGame(item)} 
+            <TouchableOpacity
+              key={item.id} onPress={() => playGame(item)}
               style={item.status_game ? container.gameContainerPlayDisabled : container.gameContainerPlay}
             >
               <Text>{count++}</Text>
@@ -249,7 +300,7 @@ export default function Home() {
               <Text>{item.goal_team_one}</Text>
 
               <Text>X</Text>
-              
+
               <Text>{item.goal_team_two}</Text>
               <Text style={container.textTeamTwo}>{item.team_two}</Text>
             </TouchableOpacity>
@@ -257,7 +308,7 @@ export default function Home() {
         </ScrollView>
       </View>
 
-      <Modal 
+      <Modal
         animationType="slide"
         transparent={false}
         visible={isModalGameOpen}
@@ -272,7 +323,7 @@ export default function Home() {
               <TouchableOpacity onPress={() => GoalOne('-')} style={container.buttonPlacarMinus}>
                 <Text>-</Text>
               </TouchableOpacity>
-                <Text style={container.textGamePlay}>{goalOne}</Text>
+              <Text style={container.textGamePlay}>{goalOne}</Text>
               <TouchableOpacity onPress={() => GoalOne('+')} style={container.buttonPlacarPlus}>
                 <Text>+</Text>
               </TouchableOpacity>
@@ -282,13 +333,13 @@ export default function Home() {
               <TouchableOpacity onPress={() => GoalTwo('-')} style={container.buttonPlacarMinus}>
                 <Text>-</Text>
               </TouchableOpacity>
-                <Text style={container.textGamePlay}>{goalTwo}</Text>
+              <Text style={container.textGamePlay}>{goalTwo}</Text>
               <TouchableOpacity onPress={() => GoalTwo('+')} style={container.buttonPlacarPlus}>
                 <Text>+</Text>
               </TouchableOpacity>
             </View>
             <Text style={container.textGameX}>{game?.team_two}</Text>
-            
+
             <View style={container.containerMarkPlay}>
               <Countdown initialSeconds={1200} />
             </View>
@@ -303,7 +354,7 @@ export default function Home() {
           </TouchableOpacity>
         </View>
       </Modal>
-      
+
     </View>
   )
 }

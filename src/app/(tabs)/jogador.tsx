@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
-import { 
+import {
   Alert,
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  SafeAreaView
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView
 } from "react-native";
-import { container } from "../../../styles/global";
-import { SelectList } from 'react-native-dropdown-select-list'
+import { Feather } from '@expo/vector-icons'
 import { supabase } from "../../lib/supabase";
+import { SelectList } from 'react-native-dropdown-select-list'
 import { IPlayer, ISelect } from "../../utils/interface";
+import { container } from "../../../styles/global";
 
 export default function Time() {
-  const [player, setPlayer] = useState<IPlayer[]>([])
+  const [players, setPlayers] = useState<IPlayer[]>([])
   const [dataTeam, setDataTeam] = useState<ISelect[]>([])
   const [dataPlayer, setDataPlayer] = useState<ISelect[]>([])
-  const [playerName, setPlayerName] = useState('')
+  const [playerId, setPlayerId] = useState('')
   const [team, setTeam] = useState('')
   const [idPlayer, setIdPlayer] = useState(0)
   const [name, setName] = useState('')
@@ -24,7 +26,7 @@ export default function Time() {
   const [numberPosition, setNumberPosition] = useState('')
 
   function resetForm() {
-    setPlayerName('')
+    setPlayerId('')
     setTeam('')
     setIdPlayer(0)
     setName('')
@@ -32,12 +34,15 @@ export default function Time() {
     setNumberPosition('')
   }
 
-  async function handleSelectTeam() {
+  async function handleSelectTeam(teamId: number) {
     try {
-      const { data } = await supabase.from('players').select('*').eq('team_id', team)
+      const { data } = await supabase
+        .from('players')
+        .select('*')
+        .eq('team_id', teamId)
       if (data) {
-        setPlayer(data)
-        const temp:ISelect[] = data.map(item => {
+        setPlayers(data)
+        const temp: ISelect[] = data.map(item => {
           return { key: item.id, value: item.name }
         })
         setDataPlayer(temp)
@@ -49,9 +54,9 @@ export default function Time() {
   }
 
   function handleSelectPlayer() {
-    if (player) {
-      const tempObj = player.find(item => item.id === Number(playerName))
-      if(tempObj) {
+    if (players) {
+      const tempObj = players.find(item => item.id === Number(playerId))
+      if (tempObj) {
         setIdPlayer(tempObj.id)
         setName(tempObj.name)
         setAge(String(tempObj.age ? tempObj.age : ''))
@@ -69,6 +74,7 @@ export default function Time() {
         number_position: numberPosition
       })
       Alert.alert('Jogador incluído com sucesso.')
+      resetForm()
     } catch (error) {
       console.log(error)
     }
@@ -83,6 +89,7 @@ export default function Time() {
         number_position: numberPosition
       }).eq('id', idPlayer)
       Alert.alert('Dados do jogador atualizados com sucesso.')
+      resetForm()
     } catch (error) {
       console.log(error)
     }
@@ -98,9 +105,40 @@ export default function Time() {
     }
   }
 
+  async function DeletePlayer(id: number, teamId: number) {
+    Alert.alert(
+      'Exclusao de Jogador',
+      'Tem certeza que deseja excluir este jogador?',
+      [
+        {
+          text: 'Sim',
+          onPress: () => {
+            deletePlayer(id, teamId)
+          },
+          style: 'default',
+        },
+        {
+          text: 'Não',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
+  }
+
+  async function deletePlayer(id: number, teamId: number) {
+    try {
+      await supabase.from('players').delete().eq('id', id)
+      alert('Jogador excluido com sucesso!')
+      handleSelectTeam(Number(teamId))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getTeams()
-  },[])
+  }, [])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -108,42 +146,42 @@ export default function Time() {
         <Text style={container.title}>Jogador</Text>
 
         <View style={container.form}>
-          <SelectList 
+          <SelectList
             placeholder="Time"
             boxStyles={container.input}
-            setSelected={(val: string) => setTeam(val)} 
-            data={dataTeam} 
-            onSelect={handleSelectTeam}
+            setSelected={(val: string) => setTeam(val)}
+            data={dataTeam}
+            onSelect={() => handleSelectTeam(Number(team))}
             save="key"
           />
-          <SelectList 
+          <SelectList
             placeholder="Jogadores"
             boxStyles={container.input}
-            setSelected={(val: string) => setPlayerName(val)} 
-            data={dataPlayer} 
+            setSelected={(val: string) => setPlayerId(val)}
+            data={dataPlayer}
             onSelect={handleSelectPlayer}
             save="key"
           />
           <Text style={container.text}>Dados do Jogador para alteração:</Text>
-          <TextInput 
+          <TextInput
             style={container.input}
             placeholder="Nome"
             value={name}
-            onChangeText={(text:string) => setName(text)}
+            onChangeText={(text: string) => setName(text)}
           />
-          <TextInput 
+          <TextInput
             style={container.input}
             keyboardType='numeric'
             placeholder="Idade"
             value={age}
-            onChangeText={(text:string) => setAge(text)}
+            onChangeText={(text: string) => setAge(text)}
           />
-          <TextInput 
+          <TextInput
             style={container.input}
             keyboardType='numeric'
             placeholder="Número"
             value={numberPosition}
-            onChangeText={(text:string) => setNumberPosition(text)}
+            onChangeText={(text: string) => setNumberPosition(text)}
           />
           <View style={container.inputContainer}>
             <TouchableOpacity style={container.buttonContainer} onPress={handleSubmit}>
@@ -154,6 +192,31 @@ export default function Time() {
             </TouchableOpacity>
           </View>
         </View>
+
+        {(players.length > 0) ?
+          <ScrollView>
+            <View style={container.tblMiniTAble}>
+              <Text style={container.tblMiniTH}>Nª</Text>
+              <Text style={container.tblMiniTHPrimary}>Nome</Text>
+              <Text style={container.tblMiniTH}>Idade</Text>
+              <Text style={container.tblMiniTH}></Text>
+            </View>
+            {players.map(item => (
+              <View key={item.id} style={container.tblMiniRow}>
+                <Text style={container.tblMiniTD}>{item.number_position}</Text>
+                <Text style={container.tblMiniTDPrimary}>{item.name}</Text>
+                <Text style={container.tblMiniTD}>{item.age}</Text>
+                <Text style={container.tblMiniTD}>
+                  <TouchableOpacity onPress={() => DeletePlayer(item.id, item.team_id)}>
+                    <Feather name="trash-2" size={20} />
+                  </TouchableOpacity>
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+          :
+          <Text>O Time ainda não tem jogadores cadastrados</Text>
+        }
       </View>
     </SafeAreaView>
   )

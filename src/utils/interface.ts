@@ -50,6 +50,7 @@ export interface IGame {
   winner: string;
   tournament_id: number;
   status_game: boolean;
+  group_team: string;
 }
 
 export interface IStatusGame {
@@ -59,6 +60,7 @@ export interface IStatusGame {
   yellow_card: number;
   red_card: number;
   fault: number;
+  group_team: string;
 }
 
 export interface IStatusTeam {

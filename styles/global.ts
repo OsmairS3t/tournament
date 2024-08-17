@@ -117,6 +117,24 @@ export const container = StyleSheet.create({
     gap: 8,
     marginBottom: 10,
   },
+  selectMini: {
+    width: '85%',
+    height: 50,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    backgroundColor: '#ffffff',
+  },
+  buttonIcon: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
+    height: 50,
+    borderRadius: 4,
+    backgroundColor: '#068406',
+  },
   inputAddNew: {
     width: '70%',
     height: 40,
@@ -267,13 +285,51 @@ export const container = StyleSheet.create({
     fontWeight: '700',
   },
   tblTTTD: {
-    width: 20,
+    width: 25,
     fontWeight: '700',
   },
   tblTDPrimary: {
     width: 100,
   },
   tblTD: {
-    width: 20,
-  }
+    width: 25,
+  },
+  textTblGroup: {
+    width: '100%',
+    height: 30,
+    padding: 2,
+    marginTop: 10,
+    marginBottom: 10,
+    fontWeight: '700',
+    backgroundColor: '#ddd'
+  },
+  tblMiniTAble: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+  },
+  tblMiniRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    height: 40,
+  },
+  tblMiniTHPrimary: {
+    fontWeight: '700',
+    width: 200,
+  },
+  tblMiniTH: {
+    fontWeight: '700',
+    width: 50,
+  },
+  tblMiniTDPrimary: {
+    width: 200,
+  },
+  tblMiniTD: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: 50,
+  },
 })
