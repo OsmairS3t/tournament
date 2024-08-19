@@ -10,6 +10,33 @@ export const container = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
+  headerPage: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 4,
+  },
+  textHeaderPage: {
+    paddingLeft: 10,
+    paddingTop: 10,
+    width: 290,
+    height: 40,
+    backgroundColor: '#121212',
+    color: '#FFF',
+  },
+  iconClose: {
+    color: 'white',
+  
+  },
+  buttonHeaderPage: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: 4,
+    backgroundColor: 'black'
+  },
   title: {
     fontSize: 18,
     fontWeight: '600',

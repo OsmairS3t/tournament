@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, Modal, TouchableOpacity, ScrollView, Alert, Button } from "react-native";
 import { container } from "../../../styles/global";
 import { supabase } from "../../lib/supabase";
 import { useEffect, useState } from "react";
@@ -19,6 +19,62 @@ export default function Home() {
   const [teamTwo, setTeamTwo] = useState('')
   const [stage, setStage] = useState('')
   let count = 1
+
+  async function loadClassification() {
+    try {
+      const classGroupA = await supabase
+        .from('statusteam')
+        .select('*')
+        .eq('tournament_id', tournamentId)
+        .eq('group_team', 'Grupo A')
+        .order('points', {ascending: false})
+        .order('wins', {ascending: false})
+        .order('defeats', {ascending: true})
+        .order('draws', {ascending: true})
+        .order('draws', {ascending: true})
+        .order('goal_scored', {ascending: false})
+        .order('goal_conceded', {ascending: true})
+        .order('goal_difference', {ascending: false})
+      if (classGroupA.data) {
+        let ordem = 1
+        classGroupA.data.map(async (item) => {
+          await supabase
+            .from('statusteam')
+            .update({classification: ordem ++})
+            .eq('id', item.id)
+        })
+      }
+
+      const classGroupB = await supabase
+        .from('statusteam')
+        .select('*')
+        .eq('tournament_id', tournamentId)
+        .eq('group_team', 'Grupo B')
+        .order('points', {ascending: false})
+        .order('wins', {ascending: false})
+        .order('defeats', {ascending: true})
+        .order('draws', {ascending: true})
+        .order('draws', {ascending: true})
+        .order('goal_scored', {ascending: false})
+        .order('goal_conceded', {ascending: true})
+        .order('goal_difference', {ascending: false})
+      if (classGroupB.data) {
+        let ordem = 1
+        classGroupB.data.map(async (item) => {
+          await supabase
+          .from('statusteam')
+          .update({classification: ordem ++})
+          .eq('id', item.id)
+        })
+      }
+      if (classGroupB.error) {
+        console.log(classGroupB.error)
+      }
+      Alert.alert('Times classificados com sucesso.')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async function getTournaments() {
     const { data } = await supabase.from('tournaments').select('*')
@@ -253,6 +309,7 @@ export default function Home() {
         }
       }
       Alert.alert('Status de classificação atualizada com sucesso.')
+      loadClassification()
     } catch (error) {
       console.log(error)
     }
