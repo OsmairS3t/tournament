@@ -23,21 +23,6 @@ export default function Classification() {
     }
   }
 
-  async function getClassification(tournament_id: number) {
-    const { data, error } = await supabase
-      .from('statusteam')
-      .select('*')
-      .eq('tournament_id', tournament_id)
-      .order('group_team', { ascending: true })
-      .order('points', { ascending: false })
-    if (data) {
-      setClassification(data)
-    }
-    if (error) {
-      console.log('Erro lista Classificação: ', error)
-    }
-  }
-
   async function getClassGroup(tournament_id: number) {
     try {
       const dataClassA = await supabase
@@ -78,7 +63,8 @@ export default function Classification() {
     <View style={container.content}>
       <Text>Classificação</Text>
       <View style={container.form}>
-        <View style={container.inputContainer}>
+
+        <View style={container.groupHeader}>
           <SelectList
             placeholder="Torneio"
             boxStyles={container.selectMini}

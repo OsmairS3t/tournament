@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'
 
 interface CountdownProps {
@@ -11,7 +11,10 @@ const Countdown: React.FC<CountdownProps> = ({ initialSeconds }) => {
   const [isRunning, setIsRunning] = useState<boolean>(false); // Controla se a contagem está em andamento
 
   useEffect(() => {
-    if (!isRunning || secondsLeft === 0) return;
+    if (!isRunning || secondsLeft === 0) {
+      return;
+    }
+
 
     const intervalId = setInterval(() => {
       setSecondsLeft((prevSeconds) => prevSeconds - 1);
@@ -41,17 +44,19 @@ const Countdown: React.FC<CountdownProps> = ({ initialSeconds }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.timeText}>{formatTime(secondsLeft)}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.btnStart} onPress={startCountdown}>
-          <MaterialIcons name='play-arrow' size={32} style={{color: '#ffffff'}} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btnStop} onPress={stopCountdown}>
-          <MaterialIcons name='pause' size={32} style={{color: '#ffffff'}} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btnReset} onPress={resetCountdown}>
-          <MaterialIcons name='replay' size={32} style={{color: '#ffffff'}} />
-        </TouchableOpacity>
+      <View style={styles.content}>
+        <Text style={styles.timeText}>{formatTime(secondsLeft)}</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.btnStart} onPress={startCountdown}>
+            <MaterialIcons name='play-arrow' size={32} style={{color: '#ffffff'}} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnStop} onPress={stopCountdown}>
+            <MaterialIcons name='pause' size={32} style={{color: '#ffffff'}} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnReset} onPress={resetCountdown}>
+            <MaterialIcons name='replay' size={32} style={{color: '#ffffff'}} />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -62,11 +67,16 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 8,
     padding: 5,
+  },
+  content: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingBottom: 10,
   },
   timeText: {
     fontSize: 48,

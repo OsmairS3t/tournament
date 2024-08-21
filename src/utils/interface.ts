@@ -45,6 +45,8 @@ export interface IGame {
   team_two: string;
   goal_team_one: number;
   goal_team_two: number;
+  goal_penalty_one: number;
+  goal_penalty_two: number;
   yellow_cards: number;
   red_cards: number;
   winner: string;

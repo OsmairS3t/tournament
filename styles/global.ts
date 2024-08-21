@@ -136,18 +136,22 @@ export const container = StyleSheet.create({
     height: 450,
   },
   inputContainer: {
-    width: '97%',
+    width: '100%',
     height: 30,
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 8,
     marginBottom: 10,
   },
+  groupHeader: {
+    flexDirection: 'row', 
+    width: '100%', 
+    justifyContent: 'space-between',
+  },
   selectMini: {
     width: '85%',
     height: 50,
-    padding: 10,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#cccccc',
@@ -267,6 +271,27 @@ export const container = StyleSheet.create({
     alignItems: 'center',
     height: 40,
   },
+  btnPenaltis: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '70%',
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: 'orange',
+  },
+  textButtonPenaltis: {
+    color: 'black',
+    fontWeight: '500',
+    fontSize: 14
+  },
+  placarPenalty: {
+    width: '70%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    backgroundColor: 'orange'
+  },
   buttonPlacarPlus: {
     backgroundColor: '#9ecbf7',
     padding: 4,
@@ -275,8 +300,24 @@ export const container = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  buttonPlacarPenaltyPlus: {
+    backgroundColor: '#ccc',
+    padding: 4,
+    width: 40,
+    borderRadius: 4,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   buttonPlacarMinus: {
     backgroundColor: '#ed8c66',
+    padding: 4,
+    width: 40,
+    borderRadius: 4,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  buttonPlacarPenaltyMinus: {
+    backgroundColor: '#ccc',
     padding: 4,
     width: 40,
     borderRadius: 4,
@@ -359,4 +400,15 @@ export const container = StyleSheet.create({
     justifyContent: 'center',
     width: 50,
   },
+  penalty: {
+    width: '100%',
+    height: 100,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+
 })

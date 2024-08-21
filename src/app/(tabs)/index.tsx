@@ -2,6 +2,7 @@ import { View, Text, Modal, TouchableOpacity, ScrollView, Alert, Button } from "
 import { container } from "../../../styles/global";
 import { supabase } from "../../lib/supabase";
 import { useEffect, useState } from "react";
+import { Feather } from '@expo/vector-icons'
 import { SelectList } from "react-native-dropdown-select-list";
 import { IGame, ISelect } from "../../utils/interface";
 import Countdown from "../../functions/CountDown";
@@ -15,9 +16,13 @@ export default function Home() {
   const [isModalGameOpen, setIsModalGameOpen] = useState(false)
   const [goalOne, setGoalOne] = useState(0)
   const [goalTwo, setGoalTwo] = useState(0)
+  const [goalPenaltyOne, setGoalPenaltyOne] = useState(0)
+  const [goalPenaltyTwo, setGoalPenaltyTwo] = useState(0)
   const [teamOne, setTeamOne] = useState('')
   const [teamTwo, setTeamTwo] = useState('')
   const [stage, setStage] = useState('')
+  const [textButtonPenalty, setTextButtonPenalty] = useState('Ir para cobrança de Penaltis')
+  const [isPenalty, setIsPenalty] = useState<boolean>(false)
   let count = 1
 
   async function loadClassification() {
@@ -86,14 +91,44 @@ export default function Home() {
     }
   }
 
-  async function listGames(id_tournament: number) {
+  async function listGames(id_tournament: number, stage: string) {
     const dataTournament = await supabase.from('tournaments').select('*').eq('id', id_tournament)
     if (dataTournament.data) {
       setTournamentName(dataTournament.data[0].name)
     }
-    const { data } = await supabase.from('games').select('*').order('id')
+    const { data } = await supabase
+      .from('games')
+      .select('*').order('id')
+      .eq('tournament_id',id_tournament)
+      .eq('stage',stage)
     if (data) {
       setGames(data)
+    }
+  }
+
+  function loadPenalties() {
+    if (textButtonPenalty === 'Ir para cobrança de Penaltis') {
+      setIsPenalty(true)
+      setTextButtonPenalty('Fechar cobrança de Penaltis')
+    } else {
+      setIsPenalty(false)
+      setTextButtonPenalty('Ir para cobrança de Penaltis')
+    }
+  }
+
+  function GoalPenaltyOne(value: string) {
+    if (value === '-') {
+      setGoalPenaltyOne(goalPenaltyOne - 1)
+    } else {
+      setGoalPenaltyOne(goalPenaltyOne + 1)
+    }
+  }
+
+  function GoalPenaltyTwo(value: string) {
+    if (value === '-') {
+      setGoalPenaltyTwo(goalPenaltyTwo - 1)
+    } else {
+      setGoalPenaltyTwo(goalPenaltyTwo + 1)
     }
   }
 
@@ -194,6 +229,12 @@ export default function Home() {
       }
       if (goalOne === goalTwo) {  //Draws
         winner = 'EMPATE'
+        if (goalPenaltyOne > goalPenaltyTwo) {
+          winner = game.team_one
+        }
+        if (goalPenaltyOne < goalPenaltyTwo) {
+          winner = game.team_two
+        }
         tOpoints = 1
         tOwins = 0
         tOdefeats = 0
@@ -214,31 +255,48 @@ export default function Home() {
       await supabase.from('games').update({
         goal_team_one: goalOne,
         goal_team_two: goalTwo,
+        goal_penalty_one: goalPenaltyOne,
+        goal_penalty_two: goalPenaltyTwo,
         winner: winner,
         status_game: true
       }).eq('id', game?.id)
       Alert.alert('Resultado salvo com sucesso!')
-      listGames(tournamentId)
+      listGames(tournamentId, stage)
 
-      //verify status team one and two if exists
-      const { data, error } = await supabase
-        .from('statusteam')
-        .select('*')
-        .eq('tournament_id', tournamentId)
-        .eq('team_name', teamOne)
-      if (data) {
-        if (data.length > 0) {
-          tODBpoints = data[0].points
-          tODBwins = data[0].wins
-          tODBdefeats = data[0].defeats
-          tODBdraws = data[0].draws
-          tODBgoal_scored = data[0].goal_scored
-          tODBgoal_conceded = data[0].goal_conceded
-          tODBgoal_difference = data[0].goal_difference
-          //upate database
-          await supabase
-            .from('statusteam')
-            .update({
+      //verify status team one and two if exists ONY GROUP STAGE
+      if (stage === 'GRUPOS') {
+        const { data, error } = await supabase
+          .from('statusteam')
+          .select('*')
+          .eq('tournament_id', tournamentId)
+          .eq('team_name', teamOne)
+        if (data) {
+          if (data.length > 0) {
+            tODBpoints = data[0].points
+            tODBwins = data[0].wins
+            tODBdefeats = data[0].defeats
+            tODBdraws = data[0].draws
+            tODBgoal_scored = data[0].goal_scored
+            tODBgoal_conceded = data[0].goal_conceded
+            tODBgoal_difference = data[0].goal_difference
+            //upate database
+            await supabase
+              .from('statusteam')
+              .update({
+                points: tOpoints + tODBpoints,
+                wins: tOwins + tODBwins,
+                defeats: tOdefeats + tODBdefeats,
+                draws: tOdraws + tODBdraws,
+                goal_scored: tOgoal_scored + tODBgoal_scored,
+                goal_conceded: tOgoal_conceded + tODBgoal_conceded,
+                goal_difference: tOgoal_difference + tODBgoal_difference,
+                group_team: groupTeam
+              })
+              .eq('id', data[0].id)
+          } else { //save statusteam One
+            await supabase.from('statusteam').insert({
+              tournament_id: tournamentId,
+              team_name: teamOne,
               points: tOpoints + tODBpoints,
               wins: tOwins + tODBwins,
               defeats: tOdefeats + tODBdefeats,
@@ -248,40 +306,41 @@ export default function Home() {
               goal_difference: tOgoal_difference + tODBgoal_difference,
               group_team: groupTeam
             })
-            .eq('id', data[0].id)
-        } else { //save statusteam One
-          await supabase.from('statusteam').insert({
-            tournament_id: tournamentId,
-            team_name: teamOne,
-            points: tOpoints + tODBpoints,
-            wins: tOwins + tODBwins,
-            defeats: tOdefeats + tODBdefeats,
-            draws: tOdraws + tODBdraws,
-            goal_scored: tOgoal_scored + tODBgoal_scored,
-            goal_conceded: tOgoal_conceded + tODBgoal_conceded,
-            goal_difference: tOgoal_difference + tODBgoal_difference,
-            group_team: groupTeam
-          })
+          }
         }
-      }
-      if (error) { console.log('erro status one', error) }
+        if (error) { console.log('erro status one', error) }
 
-      const dataTeamTwo = await supabase.from('statusteam').select('*')
-        .eq('tournament_id', tournamentId)
-        .eq('team_name', teamTwo)
-      if (dataTeamTwo.data) {
-        if (dataTeamTwo.data.length > 0) {
-          tTDBpoints = dataTeamTwo.data[0].points
-          tTDBwins = dataTeamTwo.data[0].wins
-          tTDBdefeats = dataTeamTwo.data[0].defeats
-          tTDBdraws = dataTeamTwo.data[0].draws
-          tTDBgoal_scored = dataTeamTwo.data[0].goal_scored
-          tTDBgoal_conceded = dataTeamTwo.data[0].goal_conceded
-          tTDBgoal_difference = dataTeamTwo.data[0].goal_difference
-          //upate database
-          await supabase
-            .from('statusteam')
-            .update({
+        const dataTeamTwo = await supabase.from('statusteam').select('*')
+          .eq('tournament_id', tournamentId)
+          .eq('team_name', teamTwo)
+        if (dataTeamTwo.data) {
+          if (dataTeamTwo.data.length > 0) {
+            tTDBpoints = dataTeamTwo.data[0].points
+            tTDBwins = dataTeamTwo.data[0].wins
+            tTDBdefeats = dataTeamTwo.data[0].defeats
+            tTDBdraws = dataTeamTwo.data[0].draws
+            tTDBgoal_scored = dataTeamTwo.data[0].goal_scored
+            tTDBgoal_conceded = dataTeamTwo.data[0].goal_conceded
+            tTDBgoal_difference = dataTeamTwo.data[0].goal_difference
+            //upate database
+            await supabase
+              .from('statusteam')
+              .update({
+                points: tTpoints + tTDBpoints,
+                wins: tTwins + tTDBwins,
+                defeats: tTdefeats + tTDBdefeats,
+                draws: tTdraws + tTDBdraws,
+                goal_scored: tTgoal_scored + tTDBgoal_scored,
+                goal_conceded: tTgoal_conceded + tTDBgoal_conceded,
+                goal_difference: tTgoal_difference + tTDBgoal_difference,
+                group_team: groupTeam
+              })
+              .eq('id', dataTeamTwo.data[0].id)
+          } else {
+            // save statusteam Two
+            await supabase.from('statusteam').insert({
+              tournament_id: tournamentId,
+              team_name: teamTwo,
               points: tTpoints + tTDBpoints,
               wins: tTwins + tTDBwins,
               defeats: tTdefeats + tTDBdefeats,
@@ -291,25 +350,11 @@ export default function Home() {
               goal_difference: tTgoal_difference + tTDBgoal_difference,
               group_team: groupTeam
             })
-            .eq('id', dataTeamTwo.data[0].id)
-        } else {
-          // save statusteam Two
-          await supabase.from('statusteam').insert({
-            tournament_id: tournamentId,
-            team_name: teamTwo,
-            points: tTpoints + tTDBpoints,
-            wins: tTwins + tTDBwins,
-            defeats: tTdefeats + tTDBdefeats,
-            draws: tTdraws + tTDBdraws,
-            goal_scored: tTgoal_scored + tTDBgoal_scored,
-            goal_conceded: tTgoal_conceded + tTDBgoal_conceded,
-            goal_difference: tTgoal_difference + tTDBgoal_difference,
-            group_team: groupTeam
-          })
+          }
         }
+        Alert.alert('Status de classificação atualizada com sucesso.')
+        loadClassification()
       }
-      Alert.alert('Status de classificação atualizada com sucesso.')
-      loadClassification()
     } catch (error) {
       console.log(error)
     }
@@ -327,7 +372,7 @@ export default function Home() {
           placeholder="Torneio"
           boxStyles={container.input}
           setSelected={(val: string) => setTournamentId(val)}
-          onSelect={() => listGames(Number(tournamentId))}
+          onSelect={() => listGames(Number(tournamentId), stage)}
           data={dataTournament}
           save="key"
         />
@@ -336,6 +381,7 @@ export default function Home() {
           placeholder="Fase"
           boxStyles={container.input}
           setSelected={(val: string) => setStage(val)}
+          onSelect={() => listGames(Number(tournamentId), stage)}
           data={[
             { key: 'GRUPOS', value: 'GRUPOS' },
             { key: 'SEMIFINAL', value: 'SEMIFINAL' },
@@ -372,6 +418,7 @@ export default function Home() {
         onRequestClose={() => {
           setIsModalGameOpen(!isModalGameOpen);
         }}>
+
         <View style={container.form}>
           <View style={container.gameContainerOnPlay}>
 
@@ -385,7 +432,33 @@ export default function Home() {
                 <Text>+</Text>
               </TouchableOpacity>
             </View>
+
+            {(isPenalty) &&
+              <View style={container.placarPenalty}>
+                <TouchableOpacity onPress={() => GoalPenaltyOne('-')} style={container.buttonPlacarPenaltyMinus}>
+                  <Text>-</Text>
+                </TouchableOpacity>
+                <Text style={container.textGamePlay}>{goalPenaltyOne}</Text>
+                <TouchableOpacity onPress={() => GoalPenaltyOne('+')} style={container.buttonPlacarPenaltyPlus}>
+                  <Text>+</Text>
+                </TouchableOpacity>
+              </View>
+            }
+            
             <Text style={container.textGameX}>X</Text>
+            
+            {(isPenalty) &&
+              <View style={container.placarPenalty}>
+                <TouchableOpacity onPress={() => GoalPenaltyTwo('-')} style={container.buttonPlacarPenaltyMinus}>
+                  <Text>-</Text>
+                </TouchableOpacity>
+                <Text style={container.textGamePlay}>{goalPenaltyTwo}</Text>
+                <TouchableOpacity onPress={() => GoalPenaltyTwo('+')} style={container.buttonPlacarPenaltyPlus}>
+                  <Text>+</Text>
+                </TouchableOpacity>
+              </View>
+            }
+
             <View style={container.placar}>
               <TouchableOpacity onPress={() => GoalTwo('-')} style={container.buttonPlacarMinus}>
                 <Text>-</Text>
@@ -397,8 +470,14 @@ export default function Home() {
             </View>
             <Text style={container.textGameX}>{game?.team_two}</Text>
 
+            {(stage !== 'GRUPOS') && 
+              <TouchableOpacity style={container.btnPenaltis} onPress={loadPenalties}>
+                <Text style={container.textButtonPenaltis}>{textButtonPenalty}</Text>
+              </TouchableOpacity>
+            }
+
             <View style={container.containerMarkPlay}>
-              <Countdown initialSeconds={1200} />
+              <Countdown initialSeconds={Number(game?.duration)*60} />
             </View>
 
             <TouchableOpacity style={container.button} onPress={() => saveGame()}>
