@@ -183,7 +183,7 @@ export default function Time() {
             value={numberPosition}
             onChangeText={(text: string) => setNumberPosition(text)}
           />
-          <View style={container.inputContainer}>
+          <View style={container.buttonPlayerContainer}>
             <TouchableOpacity style={container.buttonContainer} onPress={handleSubmit}>
               <Text style={container.textButton}>Incluir Novo</Text>
             </TouchableOpacity>

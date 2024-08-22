@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons'
 import { SelectList } from "react-native-dropdown-select-list";
 import { IGame, ISelect } from "../../utils/interface";
 import Countdown from "../../functions/CountDown";
+import Header from "../../components/header";
 
 export default function Home() {
   const [tournamentId, setTournamentId] = useState('')
@@ -490,7 +491,6 @@ export default function Home() {
           </TouchableOpacity>
         </View>
       </Modal>
-
-    </View>
+      </View>
   )
 }
