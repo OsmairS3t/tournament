@@ -15,7 +15,7 @@ import { Feather } from '@expo/vector-icons'
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { ISelect, ITournament } from "../utils/interface";
-import { container, global } from "../../styles/global";
+import { global, form } from "../../styles/global";
 
 interface MemberInputProps {
   index: number;
@@ -83,49 +83,48 @@ export default function Time() {
   }, [])
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={global.container}>
-        <View style={global.headerPage}>
-          <TouchableOpacity onPress={handleBack}>
-            <Feather name='arrow-left' size={24} />
-          </TouchableOpacity>
-          <Text style={global.title}>Times</Text>
-        </View>
-        <View style={global.form}>
-          <SelectList
-            placeholder="Torneio"
-            boxStyles={global.input}
-            setSelected={(val: string) => setTournament(val)}
-            data={dataTournament}
-            save="key"
-          />
-          <TextInput
-            style={global.input}
-            placeholder="Nome do time"
-            value={name}
-            onChangeText={(text: string) => setName(text)}
-          />
-          <TextInput
-            style={global.input}
-            placeholder="Cores"
-            value={colors}
-            onChangeText={(text: string) => setColors(text)}
-          />
-          <TextInput
-            style={container.inputPlayers}
-            placeholder="Nomes dos Jogadores (somente nome)"
-            keyboardType="default"
-            multiline
-            numberOfLines={20}
-            maxLength={150}
-            value={players}
-            onChangeText={(text: string) => setPlayers(text)}
-          />
-          <TouchableOpacity style={global.button} onPress={handleSubmit}>
-            <Text style={container.textButton}>Salvar</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={global.container}>
+      <View style={global.headerPage}>
+        <TouchableOpacity onPress={handleBack}>
+          <Feather name='arrow-left' size={24} />
+        </TouchableOpacity>
+        <Text style={global.title}>Times</Text>
       </View>
-    </SafeAreaView>
+
+      <View style={form.container}>
+        <SelectList
+          placeholder="Torneio"
+          boxStyles={form.input}
+          setSelected={(val: string) => setTournament(val)}
+          data={dataTournament}
+          save="key"
+        />
+        <TextInput
+          style={form.input}
+          placeholder="Nome do time"
+          value={name}
+          onChangeText={(text: string) => setName(text)}
+        />
+        <TextInput
+          style={form.input}
+          placeholder="Cores"
+          value={colors}
+          onChangeText={(text: string) => setColors(text)}
+        />
+        <TextInput
+          style={form.inputPlayers}
+          placeholder="Nomes dos Jogadores (somente nome)"
+          keyboardType="default"
+          multiline
+          numberOfLines={20}
+          maxLength={150}
+          value={players}
+          onChangeText={(text: string) => setPlayers(text)}
+        />
+        <TouchableOpacity style={form.button} onPress={handleSubmit}>
+          <Text style={form.textButton}>Salvar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   )
 }

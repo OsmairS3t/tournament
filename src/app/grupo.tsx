@@ -12,7 +12,7 @@ import { Feather } from '@expo/vector-icons'
 import { SelectList } from 'react-native-dropdown-select-list'
 import { IGroup, ISelect, ITournament } from "../utils/interface";
 import { supabase } from "../lib/supabase";
-import { container, global } from "../../styles/global";
+import { form, global } from "../../styles/global";
 
 type tournamentProp = {
   name: string;
@@ -108,7 +108,6 @@ export default function Grupo() {
   }, [])
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
       <View style={global.container}>
         <View style={global.headerPage}>
           <TouchableOpacity onPress={handleBack}>
@@ -116,36 +115,37 @@ export default function Grupo() {
           </TouchableOpacity>
           <Text style={global.title}>Grupos</Text>
         </View>
-        <View style={container.form}>
+
+        <View style={form.container}>
           <SelectList
             placeholder="Torneio"
-            boxStyles={container.input}
+            boxStyles={form.input}
             setSelected={(val: string) => setTournament(val)}
             data={dataTournament}
             save="key"
           />
           <TextInput
-            style={container.input}
+            style={form.input}
             placeholder="Nome do Grupo"
             value={name}
             onChangeText={(text: string) => setName(text)}
           />
           <SelectList
             placeholder="Time"
-            boxStyles={container.input}
+            boxStyles={form.input}
             setSelected={(val: string) => setTeam(val)}
             data={dataTeam}
             save="key"
           />
-          <TouchableOpacity style={container.button} onPress={handleSubmit}>
-            <Text style={container.textButton}>Salvar</Text>
+          <TouchableOpacity style={form.button} onPress={handleSubmit}>
+            <Text style={form.textButton}>Salvar</Text>
           </TouchableOpacity>
         </View>
 
         {
           listGroups.map(item => (
-            <View key={item.id} style={container.block}>
-              <View style={container.subBlock}>
+            <View key={item.id} style={form.block}>
+              <View style={form.subBlock}>
                 <Text>{item.name}:</Text>
                 <Text>{item.teams.name}</Text>
               </View>
@@ -153,6 +153,5 @@ export default function Grupo() {
           ))
         }
       </View>
-    </SafeAreaView>
   )
 }

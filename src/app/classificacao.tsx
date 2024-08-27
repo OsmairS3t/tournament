@@ -1,11 +1,11 @@
 import { Text, TouchableOpacity, View } from "react-native";
+import { router } from "expo-router";
 import { Feather } from '@expo/vector-icons'
-import { container, global } from "../../styles/global";
 import { supabase } from "../lib/supabase";
 import { useEffect, useState } from "react";
-import { IGame, ISelect, IStatusTeam } from "../utils/interface";
+import { ISelect, IStatusTeam } from "../utils/interface";
 import { SelectList } from "react-native-dropdown-select-list";
-import { router } from "expo-router";
+import { container, form, global } from "../../styles/global";
 
 type TFinalClass = {
   firstPlace: string;
@@ -138,9 +138,9 @@ export default function Classification() {
         <TouchableOpacity onPress={handleBack}>
           <Feather name='arrow-left' size={24} />
         </TouchableOpacity>
-        <Text style={global.title}>Classificação</Text>
+        <Text style={global.title}>Classificar</Text>
       </View>
-      <View style={container.form}>
+      <View style={form.container}>
 
         <View style={container.groupHeader}>
           <SelectList
@@ -156,62 +156,62 @@ export default function Classification() {
           </TouchableOpacity>
         </View>
 
-        <Text style={container.textTblGroup}>GRUPO A:</Text>
-        <View style={container.tblClassification}>
-          <Text style={container.tblTTTDPrimary}>TIME</Text>
-          <Text style={container.tblTTTD}>P</Text>
-          <Text style={container.tblTTTD}>V</Text>
-          <Text style={container.tblTTTD}>D</Text>
-          <Text style={container.tblTTTD}>E</Text>
-          <Text style={container.tblTTTD}>GP</Text>
-          <Text style={container.tblTTTD}>GC</Text>
-          <Text style={container.tblTTTD}>SG</Text>
+        <Text style={form.textTblGroup}>GRUPO A:</Text>
+        <View style={form.tblClassification}>
+          <Text style={form.tblTTTDPrimary}>TIME</Text>
+          <Text style={form.tblTTTD}>P</Text>
+          <Text style={form.tblTTTD}>V</Text>
+          <Text style={form.tblTTTD}>D</Text>
+          <Text style={form.tblTTTD}>E</Text>
+          <Text style={form.tblTTTD}>GP</Text>
+          <Text style={form.tblTTTD}>GC</Text>
+          <Text style={form.tblTTTD}>SG</Text>
         </View>
         {classGroupA.map(item => (
-          <View key={item.id} style={container.tblClassification}>
-            <Text style={container.tblTDPrimary}>{item.team_name}</Text>
-            <Text style={container.tblTD}>{item.points}</Text>
-            <Text style={container.tblTD}>{item.wins}</Text>
-            <Text style={container.tblTD}>{item.defeats}</Text>
-            <Text style={container.tblTD}>{item.draws}</Text>
-            <Text style={container.tblTD}>{item.goal_scored}</Text>
-            <Text style={container.tblTD}>{item.goal_conceded}</Text>
-            <Text style={container.tblTD}>{item.goal_difference}</Text>
+          <View key={item.id} style={form.tblClassification}>
+            <Text style={form.tblTDPrimary}>{item.team_name}</Text>
+            <Text style={form.tblTD}>{item.points}</Text>
+            <Text style={form.tblTD}>{item.wins}</Text>
+            <Text style={form.tblTD}>{item.defeats}</Text>
+            <Text style={form.tblTD}>{item.draws}</Text>
+            <Text style={form.tblTD}>{item.goal_scored}</Text>
+            <Text style={form.tblTD}>{item.goal_conceded}</Text>
+            <Text style={form.tblTD}>{item.goal_difference}</Text>
           </View>
         ))}
 
-        <Text style={container.textTblGroup}>GRUPO B:</Text>
-        <View style={container.tblClassification}>
-          <Text style={container.tblTTTDPrimary}>TIME</Text>
-          <Text style={container.tblTTTD}>P</Text>
-          <Text style={container.tblTTTD}>V</Text>
-          <Text style={container.tblTTTD}>D</Text>
-          <Text style={container.tblTTTD}>E</Text>
-          <Text style={container.tblTTTD}>GP</Text>
-          <Text style={container.tblTTTD}>GC</Text>
-          <Text style={container.tblTTTD}>SG</Text>
+        <Text style={form.textTblGroup}>GRUPO B:</Text>
+        <View style={form.tblClassification}>
+          <Text style={form.tblTTTDPrimary}>TIME</Text>
+          <Text style={form.tblTTTD}>P</Text>
+          <Text style={form.tblTTTD}>V</Text>
+          <Text style={form.tblTTTD}>D</Text>
+          <Text style={form.tblTTTD}>E</Text>
+          <Text style={form.tblTTTD}>GP</Text>
+          <Text style={form.tblTTTD}>GC</Text>
+          <Text style={form.tblTTTD}>SG</Text>
         </View>
         {classGroupB.map(item => (
-          <View key={item.id} style={container.tblClassification}>
-            <Text style={container.tblTDPrimary}>{item.team_name}</Text>
-            <Text style={container.tblTD}>{item.points}</Text>
-            <Text style={container.tblTD}>{item.wins}</Text>
-            <Text style={container.tblTD}>{item.defeats}</Text>
-            <Text style={container.tblTD}>{item.draws}</Text>
-            <Text style={container.tblTD}>{item.goal_scored}</Text>
-            <Text style={container.tblTD}>{item.goal_conceded}</Text>
-            <Text style={container.tblTD}>{item.goal_difference}</Text>
+          <View key={item.id} style={form.tblClassification}>
+            <Text style={form.tblTDPrimary}>{item.team_name}</Text>
+            <Text style={form.tblTD}>{item.points}</Text>
+            <Text style={form.tblTD}>{item.wins}</Text>
+            <Text style={form.tblTD}>{item.defeats}</Text>
+            <Text style={form.tblTD}>{item.draws}</Text>
+            <Text style={form.tblTD}>{item.goal_scored}</Text>
+            <Text style={form.tblTD}>{item.goal_conceded}</Text>
+            <Text style={form.tblTD}>{item.goal_difference}</Text>
           </View>
         ))}
       </View>
 
       {finalClass &&
         <View style={{ width: '95%' }}>
-          <Text style={container.finalClassTitle}>CLASSIFICAÇÃO FINAL:</Text>
+          <Text style={form.finalClassTitle}>CLASSIFICAÇÃO FINAL:</Text>
           <View>
-            <Text style={container.finalClassFirst}>CAMPEÃO: {finalClass?.firstPlace}</Text>
-            <Text style={container.finalClassSecond}>VICE-CAMPEÃO: {finalClass?.secondPlace}</Text>
-            <Text style={container.finalClassThird}>3º LUGAR: {finalClass?.thirdPlace}</Text>
+            <Text style={form.finalClassFirst}>CAMPEÃO: {finalClass?.firstPlace}</Text>
+            <Text style={form.finalClassSecond}>VICE-CAMPEÃO: {finalClass?.secondPlace}</Text>
+            <Text style={form.finalClassThird}>3º LUGAR: {finalClass?.thirdPlace}</Text>
           </View>
         </View>
       }

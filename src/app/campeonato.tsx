@@ -6,7 +6,7 @@ import { SelectList } from "react-native-dropdown-select-list";
 import { IGame, ISelect } from "../utils/interface";
 import Countdown from "../functions/CountDown";
 import { router } from "expo-router";
-import { container, global } from "../../styles/global";
+import { container, global, form, championship } from "../../styles/global";
 
 export default function Campeonato() {
   const [tournamentId, setTournamentId] = useState('')
@@ -377,10 +377,11 @@ export default function Campeonato() {
         </TouchableOpacity>
         <Text style={global.title}>Torneios Luz</Text>
       </View>
-      <View style={container.form}>
+
+      <View style={form.container}>
         <SelectList
           placeholder="Torneio"
-          boxStyles={container.input}
+          boxStyles={form.input}
           setSelected={(val: string) => setTournamentId(val)}
           onSelect={() => listGames(Number(tournamentId), stage)}
           data={dataTournament}
@@ -389,7 +390,7 @@ export default function Campeonato() {
 
         <SelectList
           placeholder="Fase"
-          boxStyles={container.input}
+          boxStyles={form.input}
           setSelected={(val: string) => setStage(val)}
           onSelect={() => listGames(Number(tournamentId), stage)}
           data={[
@@ -431,7 +432,13 @@ export default function Campeonato() {
 
         <View style={container.form}>
           <View style={container.gameContainerOnPlay}>
+            <View style={championship.headerModalPage}>
+              <TouchableOpacity style={championship.buttonHeaderPage} onPress={() => setIsModalGameOpen(false)}>
+                <Feather name="x-square" size={30} style={championship.iconClose} />
+              </TouchableOpacity>
+            </View>
 
+           
             <Text style={container.textGameX}>{game?.team_one}</Text>
             <View style={container.placar}>
               <TouchableOpacity onPress={() => GoalOne('-')} style={container.buttonPlacarMinus}>
@@ -490,14 +497,10 @@ export default function Campeonato() {
               <Countdown initialSeconds={Number(game?.duration) * 60} />
             </View>
 
-            <TouchableOpacity style={container.button} onPress={() => saveGame()}>
-              <Text style={container.textButton}>Salvar Resultado</Text>
+            <TouchableOpacity style={form.button} onPress={() => saveGame()}>
+              <Text style={form.textButton}>Salvar Resultado</Text>
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity style={container.button} onPress={() => setIsModalGameOpen(false)}>
-            <Text style={container.textButton}>Fechar</Text>
-          </TouchableOpacity>
         </View>
       </Modal>
     </View>

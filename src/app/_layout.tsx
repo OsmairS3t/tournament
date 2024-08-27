@@ -1,14 +1,12 @@
-import { View } from "react-native"
+import { SafeAreaView, View } from "react-native"
 import { Slot } from "expo-router"
 import Header from "../components/header"
-import Footer from "../components/footer"
 
 export default function RootLayout() {
   return (
-    <View>
+    <SafeAreaView style={{flex: 1}}>
       <Header />
       <Slot />
-      <Footer />
-    </View>
+    </SafeAreaView>
   )
 }

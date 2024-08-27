@@ -13,7 +13,7 @@ import { Feather } from '@expo/vector-icons'
 import { supabase } from "../lib/supabase";
 import { SelectList } from 'react-native-dropdown-select-list'
 import { IPlayer, ISelect } from "../utils/interface";
-import { container, global } from "../../styles/global";
+import { form, global } from "../../styles/global";
 
 export default function Time() {
   const [players, setPlayers] = useState<IPlayer[]>([])
@@ -155,10 +155,10 @@ export default function Time() {
           <Text style={global.title}>Jogadores</Text>
         </View>
 
-        <View style={container.form}>
+        <View style={form.container}>
           <SelectList
             placeholder="Time"
-            boxStyles={container.input}
+            boxStyles={form.input}
             setSelected={(val: string) => setTeam(val)}
             data={dataTeam}
             onSelect={() => handleSelectTeam(Number(team))}
@@ -166,57 +166,58 @@ export default function Time() {
           />
           <SelectList
             placeholder="Jogadores"
-            boxStyles={container.input}
+            boxStyles={form.input}
             setSelected={(val: string) => setPlayerId(val)}
             data={dataPlayer}
             onSelect={handleSelectPlayer}
             save="key"
           />
-          <Text style={container.text}>Dados do Jogador para alteração:</Text>
+          <Text style={global.text}>Dados do Jogador para alteração:</Text>
           <TextInput
-            style={container.input}
+            style={form.input}
             placeholder="Nome"
             value={name}
             onChangeText={(text: string) => setName(text)}
           />
           <TextInput
-            style={container.input}
+            style={form.input}
             keyboardType='numeric'
             placeholder="Idade"
             value={age}
             onChangeText={(text: string) => setAge(text)}
           />
           <TextInput
-            style={container.input}
+            style={form.input}
             keyboardType='numeric'
             placeholder="Número"
             value={numberPosition}
             onChangeText={(text: string) => setNumberPosition(text)}
           />
-          <View style={container.buttonPlayerContainer}>
-            <TouchableOpacity style={container.buttonContainer} onPress={handleSubmit}>
-              <Text style={container.textButton}>Incluir Novo</Text>
+          
+          <View style={form.buttonPlayerContainer}>
+            <TouchableOpacity style={form.buttonContainer} onPress={handleSubmit}>
+              <Text style={form.textButton}>Incluir Novo</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={container.buttonContainer} onPress={handleUpdate}>
-              <Text style={container.textButton}>Alterar</Text>
+            <TouchableOpacity style={form.buttonContainer} onPress={handleUpdate}>
+              <Text style={form.textButton}>Alterar</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {(players.length > 0) ?
           <ScrollView>
-            <View style={container.tblMiniTAble}>
-              <Text style={container.tblMiniTH}>Nª</Text>
-              <Text style={container.tblMiniTHPrimary}>Nome</Text>
-              <Text style={container.tblMiniTH}>Idade</Text>
-              <Text style={container.tblMiniTH}></Text>
+            <View style={form.tblMiniTAble}>
+              <Text style={form.tblMiniTH}>Nª</Text>
+              <Text style={form.tblMiniTHPrimary}>Nome</Text>
+              <Text style={form.tblMiniTH}>Idade</Text>
+              <Text style={form.tblMiniTH}></Text>
             </View>
             {players.map(item => (
-              <View key={item.id} style={container.tblMiniRow}>
-                <Text style={container.tblMiniTD}>{item.number_position}</Text>
-                <Text style={container.tblMiniTDPrimary}>{item.name}</Text>
-                <Text style={container.tblMiniTD}>{item.age}</Text>
-                <Text style={container.tblMiniTD}>
+              <View key={item.id} style={form.tblMiniRow}>
+                <Text style={form.tblMiniTD}>{item.number_position}</Text>
+                <Text style={form.tblMiniTDPrimary}>{item.name}</Text>
+                <Text style={form.tblMiniTD}>{item.age}</Text>
+                <Text style={form.tblMiniTD}>
                   <TouchableOpacity onPress={() => DeletePlayer(item.id, item.team_id)}>
                     <Feather name="trash-2" size={20} />
                   </TouchableOpacity>

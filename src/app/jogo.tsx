@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons'
 import { supabase } from "../lib/supabase";
 import { SelectList } from 'react-native-dropdown-select-list'
 import { generateMatches, intercalateMatches } from "../functions/createTournament";
-import { container, global } from "../../styles/global";
+import { container, global, form } from "../../styles/global";
 import { IGame, ISelect } from "../utils/interface";
 import { router } from "expo-router";
 
@@ -204,12 +204,13 @@ export default function Jogo() {
         </TouchableOpacity>
         <Text style={global.title}>Jogos</Text>
       </View>
-      <View style={container.form}>
-        <TouchableOpacity style={container.button} onPress={handleOpenModalGenerate}>
-          <Text style={container.textButton}>Criar Jogos Automaticamente</Text>
+
+      <View style={form.container}>
+        <TouchableOpacity style={form.button} onPress={handleOpenModalGenerate}>
+          <Text style={form.textButton}>Criar Jogos Automaticamente</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={container.button} onPress={handleOpenModalOther}>
-          <Text style={container.textButton}>Criar Jogos Avulsos</Text>
+        <TouchableOpacity style={form.button} onPress={handleOpenModalOther}>
+          <Text style={form.textButton}>Criar Jogos Avulsos</Text>
         </TouchableOpacity>
       </View>
 
@@ -221,41 +222,45 @@ export default function Jogo() {
           setIsModalGenerateOpen(!isModalGenerateOpen);
         }}
       >
-        <View style={container.form}>
-          <View style={container.headerPage}>
-            <Text style={container.textHeaderPage}>CRIAR JOGOS AUTOMATICAMENTE:</Text>
+        <View style={global.container}>
+          <View style={container.headerModalPage}>
+            <Text style={container.textHeaderModalPage}>CRIAR JOGOS AUTOMATICAMENTE:</Text>
             <TouchableOpacity style={container.buttonHeaderPage} onPress={() => setIsModalGenerateOpen(false)}>
               <Feather name="x-square" size={30} style={container.iconClose} />
             </TouchableOpacity>
           </View>
-          <SelectList
-            placeholder="Torneio"
-            boxStyles={container.input}
-            setSelected={(val: string) => setTournament(val)}
-            onSelect={() => getTournaments(Number(tournament))}
-            data={dataTournament}
-            save="key"
-          />
 
-          <SelectList
-            placeholder="Fase"
-            boxStyles={container.input}
-            setSelected={(val: string) => setStage(val)}
-            data={[
-              { key: 'GRUPOS', value: 'GRUPOS' },
-              { key: 'SEMIFINAL', value: 'SEMIFINAL' },
-              { key: '3 LUGAR', value: '3 LUGAR' },
-              { key: 'FINAL', value: 'FINAL' },
-            ]}
-            save="key"
-          />
+          <View style={form.container}>
+            <SelectList
+              placeholder="Torneio"
+              boxStyles={form.select}
+              setSelected={(val: string) => setTournament(val)}
+              onSelect={() => getTournaments(Number(tournament))}
+              data={dataTournament}
+              save="key"
+            />
 
-          <TouchableOpacity style={container.button} onPress={createGames}>
-            <Text style={container.textButton}>Criar Jogos</Text>
-          </TouchableOpacity>
-          <Text>TORNEIO: {tournamentName}</Text>
+            <SelectList
+              placeholder="Fase"
+              boxStyles={form.select}
+              setSelected={(val: string) => setStage(val)}
+              data={[
+                { key: 'GRUPOS', value: 'GRUPOS' },
+                { key: 'SEMIFINAL', value: 'SEMIFINAL' },
+                { key: '3 LUGAR', value: '3 LUGAR' },
+                { key: 'FINAL', value: 'FINAL' },
+              ]}
+              save="key"
+            />
+            
+            <TouchableOpacity style={form.button} onPress={createGames}>
+              <Text style={form.textButton}>Criar Jogos</Text>
+            </TouchableOpacity>
+          </View>
 
-          <Text>JOGOS CRIADOS:</Text>
+          <Text style={global.text}>TORNEIO: {tournamentName}</Text>
+
+          <Text style={global.text}>JOGOS CRIADOS:</Text>
           <ScrollView style={container.buttonListContainer}>
             {listGames.map((item) => (
               <View key={item.id} style={container.inputContainer}>
@@ -281,9 +286,9 @@ export default function Jogo() {
           setIsModalOtherOpen(!isModalOtherOpen);
         }}
       >
-        <View style={container.form}>
-          <View style={container.headerPage}>
-            <Text style={container.textHeaderPage}>CRIAR JOGOS AVULSOS:</Text>
+        <View style={form.container}>
+          <View style={container.headerModalPage}>
+            <Text style={container.textHeaderModalPage}>CRIAR JOGOS AVULSOS:</Text>
             <TouchableOpacity style={container.buttonHeaderPage} onPress={() => setIsModalOtherOpen(false)}>
               <Feather name="x-square" size={30} style={container.iconClose} />
             </TouchableOpacity>

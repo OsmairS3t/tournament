@@ -12,29 +12,20 @@ export const global = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 20,
-    height: 40
+    height: 40,
+    width: '100%',
   },
   title: {
-    fontSize: 16,
+    fontSize: 20,
+    fontWeight: 'bold',
     color: '#000000',
   },
-  form: {
-    gap: 10,
+  text: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 4,
+    marginBottom: 4,
   },
-  input: {
-    padding: 10,
-    height: 50,
-    backgroundColor: '#eaeaea',
-    width: '100%'
-  },
-  select: {
-    padding: 10,
-    height: 50,
-    backgroundColor: '#eaeaea',
-    width: '100%'
-  },
-  button: {},
-  textButton: {},
 })
 
 export const header = StyleSheet.create({
@@ -42,64 +33,242 @@ export const header = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e9e9e9',
-    paddingTop: 20,
-    gap: 20,
+    backgroundColor: '#dffcff',
+    height: 100,
+    borderBottomWidth: 1,
+    borderBottomColor: '#0cbccf',
   },
-
-  title: {
-    color: '#000000',
-  },
-  text: {
-    color: '#000000',
-  },
-  textApp: {
+  image: {
     width: 150,
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#000000',
+    height: 150,
+  },
+})
+
+export const form = StyleSheet.create({
+  container: {
+    paddingTop: 10,
+    gap: 10,
+    width: '100%',
+  },
+  input: {
+    width: 'auto',
+    padding: 10,
+    height: 50,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#949494',
+    backgroundColor: '#eaeaea',
+  },
+  inputPlayers: {
+    width: '100%',
+    height: 200,
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    backgroundColor: '#ffffff',
+  },
+  select: {
+    width: '100%',
+    padding: 10,
+    height: 50,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#949494',
+    backgroundColor: '#eaeaea',
   },
   button: {
     width: '100%',
-    height: 50,
-    backgroundColor: '#0e103d'
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#383838',
+    backgroundColor: '#504f4f',
   },
-  image: {
+  textButton: {
+    color: '#ffffff',
+    fontSize: 18,
+  },
+  buttonPlayerContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '48%',
+    height: 40,
+    borderWidth: 2,
+    borderColor: '#383838',
+    backgroundColor: '#504f4f',
+    color: '#eaeaea',
+    borderRadius: 8,
+  },
+  block: {
+    width: '90%',
+    flexDirection: 'column',
+  },
+  subBlock: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 10,
+  },
+  tblClassification: {
+    width: '100%',
+    height: 25,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    gap: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#9c9b9a',
+  },
+  tblTTTDPrimary: {
     width: 100,
+    fontWeight: '700',
+  },
+  tblTTTD: {
+    width: 25,
+    fontWeight: '700',
+  },
+  tblTDPrimary: {
+    width: 100,
+  },
+  tblTD: {
+    width: 25,
+  },
+  textTblGroup: {
+    width: '100%',
+    height: 30,
+    padding: 2,
+    marginTop: 10,
+    marginBottom: 10,
+    fontWeight: '700',
+    backgroundColor: '#ddd'
+  },
+  tblMiniTAble: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+  },
+  tblMiniRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    height: 40,
+  },
+  tblMiniTHPrimary: {
+    fontWeight: '700',
+    width: 200,
+  },
+  tblMiniTH: {
+    fontWeight: '700',
+    width: 50,
+  },
+  tblMiniTDPrimary: {
+    width: 200,
+  },
+  tblMiniTD: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: 50,
+  },
+  penalty: {
+    width: '100%',
     height: 100,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  finalClassTitle: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    backgroundColor: '#eaeaea',
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  finalClassFirst: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#bbdcfc',
+    backgroundColor: '#121212',
+    paddingLeft: 8,
+    paddingTop: 2,
+    paddingBottom: 2,
+  },
+  finalClassSecond: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#fce6bb',
+    backgroundColor: '#121212',
+    paddingLeft: 8,
+    paddingTop: 2,
+    paddingBottom: 2,
+  },
+  finalClassThird: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#dcbbfc',
+    backgroundColor: '#121212',
+    paddingLeft: 8,
+    paddingTop: 2,
+    paddingBottom: 2,
   },
 })
 
 export const home = StyleSheet.create({
-  container: {
-  },
   content: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 20,
-    padding: 20,
+    gap: 10,
+    padding: 10,
   },
   block: {
     padding: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 160,
-    width: 160,
+    height: 110,
+    width: 110,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#a1a1a1',
+    borderColor: '#0cbccf',
     gap: 15,
   },
   blockFull: {
     padding: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 160,
+    height: 100,
     width: '100%',
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#a1a1a1',
+    borderColor: '#0cbccf',
     gap: 15,
+  },
+  textBlock: {
+    fontSize: 10,
   },
 })
 
@@ -110,31 +279,42 @@ export const tournament = StyleSheet.create({
   }
 })
 
-export const footer = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#e9e9e9',
-    height: 50,
-  },
-  text: {
-    color: '##000000',
-  },
-  image: {
-    width: 70,
-    height: 70,
-    color: '##000000',
-  },
-})
-
 export const player = StyleSheet.create({})
 
 export const game = StyleSheet.create({})
 
 export const team = StyleSheet.create({})
 
-export const championship = StyleSheet.create({})
+export const championship = StyleSheet.create({
+  headerModalPage: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    gap: 4,
+    width: '100%',
+  },
+  buttonHeaderPage: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
+    borderRadius: 4,
+    backgroundColor: 'red'
+  },
+  textHeaderModalPage: {
+    paddingLeft: 10,
+    paddingTop: 10,
+    width: 290,
+    height: 40,
+    backgroundColor: '#121212',
+    color: '#FFF',
+  },
+  iconClose: {
+    color: 'white',
+  },
+
+})
 
 export const container = StyleSheet.create({
   content: {
@@ -146,13 +326,13 @@ export const container = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  headerPage: {
+  headerModalPage: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 4,
   },
-  textHeaderPage: {
+  textHeaderModalPage: {
     paddingLeft: 10,
     paddingTop: 10,
     width: 290,
@@ -208,16 +388,6 @@ export const container = StyleSheet.create({
   input: {
     width: '100%',
     height: 50,
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#cccccc',
-    backgroundColor: '#ffffff',
-  },
-  inputPlayers: {
-    width: '100%',
-    height: 250,
     padding: 10,
     marginBottom: 10,
     borderRadius: 8,
@@ -320,15 +490,6 @@ export const container = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#cccccc',
     backgroundColor: '#ffffff',
-  },
-  buttonContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '48%',
-    height: 50,
-    backgroundColor: '#121212',
-    color: '#eaeaea',
-    borderRadius: 8,
   },
   block: {
     width: '90%',
@@ -482,118 +643,5 @@ export const container = StyleSheet.create({
     alignItems: 'center',
     marginTop: 30,
     marginBottom: 10,
-  },
-  tblClassification: {
-    width: '100%',
-    height: 25,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    gap: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: '#9c9b9a',
-  },
-  tblTTTDPrimary: {
-    width: 100,
-    fontWeight: '700',
-  },
-  tblTTTD: {
-    width: 25,
-    fontWeight: '700',
-  },
-  tblTDPrimary: {
-    width: 100,
-  },
-  tblTD: {
-    width: 25,
-  },
-  textTblGroup: {
-    width: '100%',
-    height: 30,
-    padding: 2,
-    marginTop: 10,
-    marginBottom: 10,
-    fontWeight: '700',
-    backgroundColor: '#ddd'
-  },
-  tblMiniTAble: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-  },
-  tblMiniRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    height: 40,
-  },
-  tblMiniTHPrimary: {
-    fontWeight: '700',
-    width: 200,
-  },
-  tblMiniTH: {
-    fontWeight: '700',
-    width: 50,
-  },
-  tblMiniTDPrimary: {
-    width: 200,
-  },
-  tblMiniTD: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: 50,
-  },
-  penalty: {
-    width: '100%',
-    height: 100,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  finalClassTitle: {
-    width: '100%',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    backgroundColor: '#eaeaea',
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  finalClassFirst: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#bbdcfc',
-    backgroundColor: '#121212',
-    paddingLeft: 8,
-    paddingTop: 2,
-    paddingBottom: 2,
-  },
-  finalClassSecond: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#fce6bb',
-    backgroundColor: '#121212',
-    paddingLeft: 8,
-    paddingTop: 2,
-    paddingBottom: 2,
-  },
-  finalClassThird: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#dcbbfc',
-    backgroundColor: '#121212',
-    paddingLeft: 8,
-    paddingTop: 2,
-    paddingBottom: 2,
   },
 })
