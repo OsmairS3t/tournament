@@ -8,11 +8,12 @@ import {
   SafeAreaView,
   ScrollView
 } from "react-native";
+import { router } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../lib/supabase";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { IPlayer, ISelect } from "../../utils/interface";
-import { container } from "../../../styles/global";
+import { IPlayer, ISelect } from "../utils/interface";
+import { container, global } from "../../styles/global";
 
 export default function Time() {
   const [players, setPlayers] = useState<IPlayer[]>([])
@@ -136,14 +137,23 @@ export default function Time() {
     }
   }
 
+  function handleBack() {
+    router.back()
+  }
+
   useEffect(() => {
     getTeams()
   }, [])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={container.content}>
-        <Text style={container.title}>Jogador</Text>
+      <View style={global.container}>
+        <View style={global.headerPage}>
+          <TouchableOpacity onPress={handleBack}>
+            <Feather name='arrow-left' size={24} />
+          </TouchableOpacity>
+          <Text style={global.title}>Jogadores</Text>
+        </View>
 
         <View style={container.form}>
           <SelectList

@@ -1,16 +1,18 @@
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
   SafeAreaView,
   FlatList
 } from "react-native";
-import { container } from "../../../styles/global";
-import { SelectList } from 'react-native-dropdown-select-list'
 import { useEffect, useState } from "react";
-import { IGroup, ISelect, ITournament } from "../../utils/interface";
-import { supabase } from "../../lib/supabase";
+import { router } from "expo-router";
+import { Feather } from '@expo/vector-icons'
+import { SelectList } from 'react-native-dropdown-select-list'
+import { IGroup, ISelect, ITournament } from "../utils/interface";
+import { supabase } from "../lib/supabase";
+import { container, global } from "../../styles/global";
 
 type tournamentProp = {
   name: string;
@@ -20,9 +22,9 @@ type teamProp = {
 }
 interface ListProps {
   id: number;
-	name: string;
+  name: string;
   tournaments: tournamentProp;
-	teams: teamProp;
+  teams: teamProp;
 }
 
 export default function Grupo() {
@@ -37,7 +39,7 @@ export default function Grupo() {
   async function getTournaments() {
     const { data } = await supabase.from('tournaments').select('*')
     if (data) {
-      const temp:ISelect[] = data.map(item => {
+      const temp: ISelect[] = data.map(item => {
         return { key: item.id, value: item.name }
       })
       setDataTournament(temp)
@@ -58,7 +60,7 @@ export default function Grupo() {
     // if (listIdTeam.length > 1) {
     const { data } = await supabase.from('teams').select('*')
     if (data) {
-      const temp:ISelect[] = data.map(item => {
+      const temp: ISelect[] = data.map(item => {
         return { key: item.id, value: item.name }
       })
       setDataTeam(temp)
@@ -79,16 +81,16 @@ export default function Grupo() {
       console.log(error)
     }
   }
- 
+
   async function ListGroups() {
     try {
       const { data } = await supabase
-      .from('groups')
-      .select(`
+        .from('groups')
+        .select(`
         id, name, tournaments(name), teams(name)
       `)
-      .order('name', {ascending: true})
-      if(data){
+        .order('name', { ascending: true })
+      if (data) {
         setListGroups(data)
       }
     } catch (error) {
@@ -96,41 +98,50 @@ export default function Grupo() {
     }
   }
 
+  function handleBack() {
+    router.back()
+  }
+
   useEffect(() => {
     getTournaments()
     ListGroups()
-  },[])
+  }, [])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={container.content}>
-        <Text style={container.title}>Grupos</Text>
+      <View style={global.container}>
+        <View style={global.headerPage}>
+          <TouchableOpacity onPress={handleBack}>
+            <Feather name='arrow-left' size={24} />
+          </TouchableOpacity>
+          <Text style={global.title}>Grupos</Text>
+        </View>
         <View style={container.form}>
-          <SelectList 
+          <SelectList
             placeholder="Torneio"
             boxStyles={container.input}
-            setSelected={(val: string) => setTournament(val)} 
-            data={dataTournament} 
+            setSelected={(val: string) => setTournament(val)}
+            data={dataTournament}
             save="key"
           />
-          <TextInput 
+          <TextInput
             style={container.input}
             placeholder="Nome do Grupo"
             value={name}
-            onChangeText={(text:string) => setName(text)}
+            onChangeText={(text: string) => setName(text)}
           />
-          <SelectList 
+          <SelectList
             placeholder="Time"
             boxStyles={container.input}
-            setSelected={(val: string) => setTeam(val)} 
-            data={dataTeam} 
+            setSelected={(val: string) => setTeam(val)}
+            data={dataTeam}
             save="key"
           />
           <TouchableOpacity style={container.button} onPress={handleSubmit}>
             <Text style={container.textButton}>Salvar</Text>
           </TouchableOpacity>
         </View>
-        
+
         {
           listGroups.map(item => (
             <View key={item.id} style={container.block}>

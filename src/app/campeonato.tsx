@@ -1,14 +1,14 @@
 import { View, Text, Modal, TouchableOpacity, ScrollView, Alert, Button } from "react-native";
-import { container } from "../../../styles/global";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../lib/supabase";
 import { useEffect, useState } from "react";
 import { Feather } from '@expo/vector-icons'
 import { SelectList } from "react-native-dropdown-select-list";
-import { IGame, ISelect } from "../../utils/interface";
-import Countdown from "../../functions/CountDown";
-import Header from "../../components/header";
+import { IGame, ISelect } from "../utils/interface";
+import Countdown from "../functions/CountDown";
+import { router } from "expo-router";
+import { container, global } from "../../styles/global";
 
-export default function Home() {
+export default function Campeonato() {
   const [tournamentId, setTournamentId] = useState('')
   const [tournamentName, setTournamentName] = useState('')
   const [dataTournament, setDataTournament] = useState<ISelect[]>([])
@@ -33,20 +33,20 @@ export default function Home() {
         .select('*')
         .eq('tournament_id', tournamentId)
         .eq('group_team', 'Grupo A')
-        .order('points', {ascending: false})
-        .order('wins', {ascending: false})
-        .order('defeats', {ascending: true})
-        .order('draws', {ascending: true})
-        .order('draws', {ascending: true})
-        .order('goal_scored', {ascending: false})
-        .order('goal_conceded', {ascending: true})
-        .order('goal_difference', {ascending: false})
+        .order('points', { ascending: false })
+        .order('wins', { ascending: false })
+        .order('defeats', { ascending: true })
+        .order('draws', { ascending: true })
+        .order('draws', { ascending: true })
+        .order('goal_scored', { ascending: false })
+        .order('goal_conceded', { ascending: true })
+        .order('goal_difference', { ascending: false })
       if (classGroupA.data) {
         let ordem = 1
         classGroupA.data.map(async (item) => {
           await supabase
             .from('statusteam')
-            .update({classification: ordem ++})
+            .update({ classification: ordem++ })
             .eq('id', item.id)
         })
       }
@@ -56,21 +56,21 @@ export default function Home() {
         .select('*')
         .eq('tournament_id', tournamentId)
         .eq('group_team', 'Grupo B')
-        .order('points', {ascending: false})
-        .order('wins', {ascending: false})
-        .order('defeats', {ascending: true})
-        .order('draws', {ascending: true})
-        .order('draws', {ascending: true})
-        .order('goal_scored', {ascending: false})
-        .order('goal_conceded', {ascending: true})
-        .order('goal_difference', {ascending: false})
+        .order('points', { ascending: false })
+        .order('wins', { ascending: false })
+        .order('defeats', { ascending: true })
+        .order('draws', { ascending: true })
+        .order('draws', { ascending: true })
+        .order('goal_scored', { ascending: false })
+        .order('goal_conceded', { ascending: true })
+        .order('goal_difference', { ascending: false })
       if (classGroupB.data) {
         let ordem = 1
         classGroupB.data.map(async (item) => {
           await supabase
-          .from('statusteam')
-          .update({classification: ordem ++})
-          .eq('id', item.id)
+            .from('statusteam')
+            .update({ classification: ordem++ })
+            .eq('id', item.id)
         })
       }
       if (classGroupB.error) {
@@ -100,8 +100,8 @@ export default function Home() {
     const { data } = await supabase
       .from('games')
       .select('*').order('id')
-      .eq('tournament_id',id_tournament)
-      .eq('stage',stage)
+      .eq('tournament_id', id_tournament)
+      .eq('stage', stage)
     if (data) {
       setGames(data)
     }
@@ -361,13 +361,22 @@ export default function Home() {
     }
   }
 
+  function handleBack() {
+    router.back()
+  }
+
   useEffect(() => {
     getTournaments()
   }, [])
 
   return (
-    <View style={container.content}>
-      <Text>Torneios Luz</Text>
+    <View style={global.container}>
+      <View style={global.headerPage}>
+        <TouchableOpacity onPress={handleBack}>
+          <Feather name='arrow-left' size={24} />
+        </TouchableOpacity>
+        <Text style={global.title}>Torneios Luz</Text>
+      </View>
       <View style={container.form}>
         <SelectList
           placeholder="Torneio"
@@ -445,9 +454,9 @@ export default function Home() {
                 </TouchableOpacity>
               </View>
             }
-            
+
             <Text style={container.textGameX}>X</Text>
-            
+
             {(isPenalty) &&
               <View style={container.placarPenalty}>
                 <TouchableOpacity onPress={() => GoalPenaltyTwo('-')} style={container.buttonPlacarPenaltyMinus}>
@@ -471,14 +480,14 @@ export default function Home() {
             </View>
             <Text style={container.textGameX}>{game?.team_two}</Text>
 
-            {(stage !== 'GRUPOS') && 
+            {(stage !== 'GRUPOS') &&
               <TouchableOpacity style={container.btnPenaltis} onPress={loadPenalties}>
                 <Text style={container.textButtonPenaltis}>{textButtonPenalty}</Text>
               </TouchableOpacity>
             }
 
             <View style={container.containerMarkPlay}>
-              <Countdown initialSeconds={Number(game?.duration)*60} />
+              <Countdown initialSeconds={Number(game?.duration) * 60} />
             </View>
 
             <TouchableOpacity style={container.button} onPress={() => saveGame()}>
@@ -491,6 +500,6 @@ export default function Home() {
           </TouchableOpacity>
         </View>
       </Modal>
-      </View>
+    </View>
   )
 }

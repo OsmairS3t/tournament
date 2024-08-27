@@ -9,12 +9,13 @@ import {
   ScrollView,
   Alert
 } from "react-native";
-import { container } from "../../../styles/global";
+import { router } from "expo-router";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { EvilIcons } from '@expo/vector-icons'
+import { Feather } from '@expo/vector-icons'
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { ISelect, ITournament } from "../../utils/interface";
+import { supabase } from "../lib/supabase";
+import { ISelect, ITournament } from "../utils/interface";
+import { container, global } from "../../styles/global";
 
 interface MemberInputProps {
   index: number;
@@ -28,7 +29,7 @@ export default function Time() {
   const [name, setName] = useState('')
   const [colors, setColors] = useState('')
   const [players, setPlayers] = useState('')
-  
+
   const reset = () => {
     setName('')
     setColors('')
@@ -46,7 +47,7 @@ export default function Time() {
   }
 
   async function handleSubmit() {
-    let jogadores:string[]=[]
+    let jogadores: string[] = []
     jogadores = players.split('\n')
     try {
       const { data } = await supabase
@@ -73,30 +74,39 @@ export default function Time() {
     }
   }
 
+  function handleBack() {
+    router.back()
+  }
+
   useEffect(() => {
     getTournaments()
   }, [])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={container.content}>
-        <Text style={container.header}>Time</Text>
-        <View style={container.form}>
+      <View style={global.container}>
+        <View style={global.headerPage}>
+          <TouchableOpacity onPress={handleBack}>
+            <Feather name='arrow-left' size={24} />
+          </TouchableOpacity>
+          <Text style={global.title}>Times</Text>
+        </View>
+        <View style={global.form}>
           <SelectList
             placeholder="Torneio"
-            boxStyles={container.input}
+            boxStyles={global.input}
             setSelected={(val: string) => setTournament(val)}
             data={dataTournament}
             save="key"
           />
           <TextInput
-            style={container.input}
+            style={global.input}
             placeholder="Nome do time"
             value={name}
             onChangeText={(text: string) => setName(text)}
           />
           <TextInput
-            style={container.input}
+            style={global.input}
             placeholder="Cores"
             value={colors}
             onChangeText={(text: string) => setColors(text)}
@@ -111,7 +121,7 @@ export default function Time() {
             value={players}
             onChangeText={(text: string) => setPlayers(text)}
           />
-          <TouchableOpacity style={container.button} onPress={handleSubmit}>
+          <TouchableOpacity style={global.button} onPress={handleSubmit}>
             <Text style={container.textButton}>Salvar</Text>
           </TouchableOpacity>
         </View>

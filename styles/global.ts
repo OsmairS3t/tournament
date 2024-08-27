@@ -1,5 +1,141 @@
 import { StyleSheet } from 'react-native'
 
+export const global = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    padding: 10,
+  },
+  headerPage:{
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 20,
+    height: 40
+  },
+  title: {
+    fontSize: 16,
+    color: '#000000',
+  },
+  form: {
+    gap: 10,
+  },
+  input: {
+    padding: 10,
+    height: 50,
+    backgroundColor: '#eaeaea',
+    width: '100%'
+  },
+  select: {
+    padding: 10,
+    height: 50,
+    backgroundColor: '#eaeaea',
+    width: '100%'
+  },
+  button: {},
+  textButton: {},
+})
+
+export const header = StyleSheet.create({
+  content: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e9e9e9',
+    paddingTop: 20,
+    gap: 20,
+  },
+
+  title: {
+    color: '#000000',
+  },
+  text: {
+    color: '#000000',
+  },
+  textApp: {
+    width: 150,
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#000000',
+  },
+  button: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#0e103d'
+  },
+  image: {
+    width: 100,
+    height: 100,
+  },
+})
+
+export const home = StyleSheet.create({
+  container: {
+  },
+  content: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 20,
+    padding: 20,
+  },
+  block: {
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 160,
+    width: 160,
+    borderWidth: 1,
+    borderColor: '#a1a1a1',
+    gap: 15,
+  },
+  blockFull: {
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 160,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#a1a1a1',
+    gap: 15,
+  },
+})
+
+export const tournament = StyleSheet.create({
+  form: {
+    flex: 1,
+    padding: 10,
+  }
+})
+
+export const footer = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e9e9e9',
+    height: 50,
+  },
+  text: {
+    color: '##000000',
+  },
+  image: {
+    width: 70,
+    height: 70,
+    color: '##000000',
+  },
+})
+
+export const player = StyleSheet.create({})
+
+export const game = StyleSheet.create({})
+
+export const team = StyleSheet.create({})
+
+export const championship = StyleSheet.create({})
+
 export const container = StyleSheet.create({
   content: {
     justifyContent: 'flex-start',

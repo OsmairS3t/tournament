@@ -1,10 +1,11 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { Feather } from '@expo/vector-icons'
-import { container } from "../../../styles/global";
-import { supabase } from "../../lib/supabase";
+import { container, global } from "../../styles/global";
+import { supabase } from "../lib/supabase";
 import { useEffect, useState } from "react";
-import { IGame, ISelect, IStatusTeam } from "../../utils/interface";
+import { IGame, ISelect, IStatusTeam } from "../utils/interface";
 import { SelectList } from "react-native-dropdown-select-list";
+import { router } from "expo-router";
 
 type TFinalClass = {
   firstPlace: string;
@@ -74,9 +75,9 @@ export default function Classification() {
       .eq('tournament_id', tournament_id)
       .not('stage', 'eq', 'GRUPOS')
     if (data) {
-      let third=''
-      let second=''
-      let first=''
+      let third = ''
+      let second = ''
+      let first = ''
       data.map(item => {
         if (item.stage === '3 LUGAR') {
           if (item.goal_team_one > item.goal_team_two) {
@@ -123,13 +124,22 @@ export default function Classification() {
     }
   }
 
+  function handleBack() {
+    router.back()
+  }
+
   useEffect(() => {
     getTournaments()
   }, [])
 
   return (
-    <View style={container.content}>
-      <Text>Classificação</Text>
+    <View style={global.container}>
+      <View style={global.headerPage}>
+        <TouchableOpacity onPress={handleBack}>
+          <Feather name='arrow-left' size={24} />
+        </TouchableOpacity>
+        <Text style={global.title}>Classificação</Text>
+      </View>
       <View style={container.form}>
 
         <View style={container.groupHeader}>
@@ -195,8 +205,8 @@ export default function Classification() {
         ))}
       </View>
 
-      { finalClass && 
-        <View style={{width: '95%'}}>
+      {finalClass &&
+        <View style={{ width: '95%' }}>
           <Text style={container.finalClassTitle}>CLASSIFICAÇÃO FINAL:</Text>
           <View>
             <Text style={container.finalClassFirst}>CAMPEÃO: {finalClass?.firstPlace}</Text>

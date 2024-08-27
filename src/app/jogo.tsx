@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, TextInput, Alert, ScrollView } from "react-native";
 import { Feather } from '@expo/vector-icons'
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../lib/supabase";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { generateMatches, intercalateMatches } from "../../functions/createTournament";
-import { container } from "../../../styles/global";
-import { IGame, ISelect } from "../../utils/interface";
+import { generateMatches, intercalateMatches } from "../functions/createTournament";
+import { container, global } from "../../styles/global";
+import { IGame, ISelect } from "../utils/interface";
+import { router } from "expo-router";
 
 type Team = string;
 type Match = [Team, Team];
@@ -186,14 +187,23 @@ export default function Jogo() {
     }
   }
 
+  function handleBack() {
+    router.back()
+  }
+
   useEffect(() => {
     getTournaments()
     getTeams()
   }, [])
 
   return (
-    <View style={container.content}>
-      <Text>Jogos</Text>
+    <View style={global.container}>
+      <View style={global.headerPage}>
+        <TouchableOpacity onPress={handleBack}>
+          <Feather name='arrow-left' size={24} />
+        </TouchableOpacity>
+        <Text style={global.title}>Jogos</Text>
+      </View>
       <View style={container.form}>
         <TouchableOpacity style={container.button} onPress={handleOpenModalGenerate}>
           <Text style={container.textButton}>Criar Jogos Automaticamente</Text>
@@ -259,7 +269,7 @@ export default function Jogo() {
               </View>
             ))}
           </ScrollView>
-          
+
         </View>
       </Modal>
 
@@ -301,15 +311,15 @@ export default function Jogo() {
             save="key"
           />
 
-          <TextInput 
+          <TextInput
             style={container.input}
             placeholder="Duração em min"
             keyboardType="numeric"
             value={duration}
-            onChangeText={(text:string) => setDurtion(text)}
+            onChangeText={(text: string) => setDurtion(text)}
           />
 
-          {stage === 'GRUPOS' && 
+          {stage === 'GRUPOS' &&
             <SelectList
               placeholder="Grupo"
               boxStyles={container.input}
