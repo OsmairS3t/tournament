@@ -209,9 +209,18 @@ export default function Classification() {
         <View style={{ width: '95%' }}>
           <Text style={form.finalClassTitle}>CLASSIFICAÇÃO FINAL:</Text>
           <View>
-            <Text style={form.finalClassFirst}>CAMPEÃO: {finalClass?.firstPlace}</Text>
-            <Text style={form.finalClassSecond}>VICE-CAMPEÃO: {finalClass?.secondPlace}</Text>
-            <Text style={form.finalClassThird}>3º LUGAR: {finalClass?.thirdPlace}</Text>
+            <View style={form.groupClass}>
+            <Text style={form.bold}>CAMPEÃO:</Text>
+            <Text style={form.finalClassFirst}>{finalClass?.firstPlace}</Text>
+            </View>
+            <View style={form.groupClass}>
+            <Text style={form.bold}>VICE-CAMPEÃO:</Text>
+            <Text style={form.finalClassSecond}>{finalClass?.secondPlace}</Text>
+            </View>
+            <View style={form.groupClass}>
+            <Text style={form.bold}>3º LUGAR:</Text>
+            <Text style={form.finalClassThird}>{finalClass?.thirdPlace}</Text>
+            </View>
           </View>
         </View>
       }
