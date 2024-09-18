@@ -24,6 +24,7 @@ export default function Jogo() {
   const [listGames, setListGames] = useState<TMatch[]>([])
   const [tournament, setTournament] = useState('')
   const [tournamentName, setTournamentName] = useState('')
+  const [tournamentModality, setTournamentModality] = useState('')
   const [teamOne, setTeamOne] = useState('')
   const [teamTwo, setTeamTwo] = useState('')
   const [group, setGroup] = useState('')
@@ -32,6 +33,7 @@ export default function Jogo() {
   const [dataTeams, setDataTeams] = useState<ISelect[]>([])
   const [isModalGenerateOpen, setIsModalGenerateOpen] = useState(false)
   const [isModalOtherOpen, setIsModalOtherOpen] = useState(false)
+  let id_game_created = 0
 
   function handleOpenModalGenerate() {
     setIsModalGenerateOpen(true)
@@ -46,6 +48,7 @@ export default function Jogo() {
       const { data } = await supabase.from('tournaments').select('*').eq('id', id)
       if (data) {
         setTournamentName(data[0].name)
+        setTournamentModality(data[0].modality)
       }
     } else {
       const { data } = await supabase.from('tournaments').select('*')
@@ -56,12 +59,14 @@ export default function Jogo() {
         setDataTournament(temp)
       }
     }
+    getTeams()
   }
 
   async function getTeams() {
     const { data } = await supabase
       .from('teams')
       .select(`id, name`)
+      .eq('tournament_id', Number(tournament))
       .order('name', { ascending: true })
     if (data) {
       const temp: ISelect[] = data.map(item => {
@@ -114,22 +119,24 @@ export default function Jogo() {
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
     try {
-      const { data, error } = await supabase.from('games').insert({
-        stage: 'GRUPOS',
-        date_game: today,
-        time_game: '20:00',
-        duration: 20,
-        team_one: match.teamOne,
-        team_two: match.teamTwo,
-        goal_team_one: 0,
-        goal_team_two: 0,
-        yellow_cards: 0,
-        red_cards: 0,
-        winner: '',
-        tournament_id: tournament,
-        status_game: false,
-        group_team: match.group
-      })
+      const { data, error } = await supabase
+        .from('games')
+        .insert({
+          stage: 'GRUPOS',
+          date_game: today,
+          time_game: '20:00',
+          duration: 20,
+          team_one: match.teamOne,
+          team_two: match.teamTwo,
+          goal_team_one: 0,
+          goal_team_two: 0,
+          yellow_cards: 0,
+          red_cards: 0,
+          winner: '',
+          tournament_id: tournament,
+          status_game: false,
+          group_team: match.group
+        })
       if (error) {
         console.log('Erro cadastro: ', error)
       }
@@ -144,23 +151,6 @@ export default function Jogo() {
   async function handleSubimtExtra(match: TMatch) {
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
-    // const data = {
-    //     stage: stage,
-    //     date_game: today,
-    //     time_game: '20:00',
-    //     duration: duration,
-    //     team_one: match.teamOne,
-    //     team_two: match.teamTwo,
-    //     goal_team_one: 0,
-    //     goal_team_two: 0,
-    //     yellow_cards: 0,
-    //     red_cards: 0,
-    //     winner: '',
-    //     tournament_id: tournament,
-    //     status_game: false,
-    //     group_team: group
-    // }
-    // console.log(data)
     try {
       const { data, error } = await supabase.from('games').insert({
         stage: stage,
@@ -177,14 +167,27 @@ export default function Jogo() {
         tournament_id: tournament,
         status_game: false,
         group_team: group
-      })
+      }).select('id')
       if (error) {
         console.log('Erro cadastro: ', error)
+      } else {
+        id_game_created = data[0].id
+        if (tournamentModality === 'Volei') {
+          createSets()
+        }
       }
       Alert.alert('Jogo cadastrado com sucesso!')
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async function createSets() {
+    await supabase.from('gamesets').insert({ id_game: id_game_created, actual_set: 1, set_point_one: 0, set_point_two: 0 })
+    await supabase.from('gamesets').insert({ id_game: id_game_created, actual_set: 2, set_point_one: 0, set_point_two: 0 })
+    await supabase.from('gamesets').insert({ id_game: id_game_created, actual_set: 3, set_point_one: 0, set_point_two: 0 })
+    await supabase.from('gamesets').insert({ id_game: id_game_created, actual_set: 4, set_point_one: 0, set_point_two: 0 })
+    await supabase.from('gamesets').insert({ id_game: id_game_created, actual_set: 5, set_point_one: 0, set_point_two: 0 })
   }
 
   function handleBack() {
@@ -316,13 +319,23 @@ export default function Jogo() {
             save="key"
           />
 
-          <TextInput
-            style={container.input}
-            placeholder="Duração em min"
-            keyboardType="numeric"
-            value={duration}
-            onChangeText={(text: string) => setDurtion(text)}
-          />
+          {tournamentModality === "Futebol" ? 
+            <TextInput
+              style={container.input}
+              placeholder="Duração em min"
+              keyboardType="numeric"
+              value={duration}
+              onChangeText={(text: string) => setDurtion(text)}
+            />
+            :
+            <TextInput
+              style={container.input}
+              placeholder="Pontos por Set"
+              keyboardType="numeric"
+              value={duration}
+              onChangeText={(text: string) => setDurtion(text)}
+            />
+          }
 
           {stage === 'GRUPOS' &&
             <SelectList

@@ -48,17 +48,7 @@ export default function Grupo() {
   }
 
   async function getTeams() {
-    // const { data } = await supabase
-    //   .from('groups')
-    //   .select('team_id')
-    //   .eq('tournament_id', tournament)
-    // if (data) {
-    //   data.map(item => {
-    //     listIdTeam.push(item.team_id)
-    //   })
-    // } 
-    // if (listIdTeam.length > 1) {
-    const { data } = await supabase.from('teams').select('*')
+    const { data } = await supabase.from('teams').select('*').eq('tournament_id', tournament)
     if (data) {
       const temp: ISelect[] = data.map(item => {
         return { key: item.id, value: item.name }
@@ -121,6 +111,7 @@ export default function Grupo() {
             placeholder="Torneio"
             boxStyles={form.input}
             setSelected={(val: string) => setTournament(val)}
+            onSelect={getTeams}
             data={dataTournament}
             save="key"
           />
